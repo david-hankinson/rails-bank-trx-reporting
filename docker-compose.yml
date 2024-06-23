@@ -1,0 +1,49 @@
+services:
+
+  rails:
+    build: ./rails
+    environment:
+      - RAILS_ENV=development
+      - APP_DATABASE_PASSWORD=znsoorcM9pGb
+      - RAILS_MAX_DB_CONNECTIONS=5
+      - REDIS_URL=redis://redis:6379/1
+    volumes:
+      - ./rails:/rails
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 3000:3000
+
+  sidekiq:
+    build: ./rails
+    command: ['bundle', 'exec', 'sidekiq']
+    environment:
+      - RAILS_ENV=development
+      - APP_DATABASE_PASSWORD=znsoorcM9pGb
+      - RAILS_MAX_DB_CONNECTIONS=5
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      - postgres
+      - redis
+    volumes_from:
+      - rails
+
+  postgres:
+    image: postgres:16.3
+    environment:
+      - POSTGRES_DB=rails
+      - POSTGRES_USER=rails
+      - POSTGRES_PASSWORD=znsoorcM9pGb
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:7.2.3-alpine
+    volumes:
+      - ./redis/data:/data
+    ports:
+      - 6379:6379
