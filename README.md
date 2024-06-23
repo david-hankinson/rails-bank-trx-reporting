@@ -6,6 +6,9 @@
 # start project
 docker compose up -d
 
+# clear everything from the Sidekiq's queue
+docker compose exec redis redis-cli FLUSHALL
+
 # generate csv file with 100M randomized transactions
 # measure the duration
 #
@@ -17,8 +20,19 @@ docker compose up -d
 # for storage reasons, only the 1000_transactions.csv file is included in this git repository
 # the 1M file is 21MB and 100M file is 2GB
 time docker compose exec rails bin/rails 'generate_transactions_csv[100000000]'
+
+# on the authors development machine, the execution time and resource usage was as follows:
+# - 1K rows: ~0.7 second
+# - 1M rows: ~5.1 seconds
+# - 100M rows: ~7.25 minutes
+time docker compose exec rails bin/rails 'feed_transactions_to_sidekiq[100000000_transactions.csv]'
 ```
 
 ### URLs
 
 - Web http://localhost:3000
+
+### TODOs
+
+- split one large CSV into multiple files first, and then feed the files to Sidekiq queue in parallel
+- add ability to skip first N rows from the CSV when feeding the data to Sidekiq queue
