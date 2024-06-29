@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  month: 2024-06-29
+  data: MyText
+  id: MyString
+
+two:
+  month: 2024-06-29
+  data: MyText
+  id: MyString

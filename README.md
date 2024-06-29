@@ -28,30 +28,44 @@ docker compose exec postgres pg_dump -U rails -d rails > ./postgres/init/rails.s
 # the 1M file is 21MB and 100M file is 2GB
 time docker compose exec rails bin/rails 'generate_transactions_csv[100000000]'
 
+# feed transaction from the CSV into Sidekiq queue
+#
 # on the authors development machine, the execution time was as follows:
 # - 1K rows: ~0.7 second
 # - 1M rows: ~5.1 seconds
 # - 100M rows: ~7.25 minutes
 time docker compose exec rails bin/rails 'feed_transactions_to_sidekiq[100000000_transactions.csv]'
 
+# process Sidekiq queue
+#
 # on the authors development machine, the execution time was as follows:
-# - 1K items in the queue: ???
-# - 1M items in the queue: ???
+# - 1K items in the queue: <1s second
+# - 1M items in the queue: ~15 seconds
 # - 100M items in the queue: ~33.5 minutes
 bundle exec sidekiq
+
+# generate reports from imported transactions
+#
+# on the authors development machine, the execution time was as follows:
+# - 1K items in the queue: <1s second
+# - 1M items in the queue: ~1.3 second
+# - 100M items in the queue: ~27.3 seconds
+time docker compose exec rails bin/rails generate_transaction_aggregations
 
 # run everything for 100K transactions in a single command as follows:
 # reset queue, database, run csv generation, feed sidekiq, process queue in a single command
 clear && \
     docker compose down && \
     docker compose up -d postgres && \
-    docker compose exec postgres psql -d postgres://rails:znsoorcM9pGb@localhost:5432 -c 'TRUNCATE transactions;' && \
+    docker compose exec postgres psql -d postgres://rails:znsoorcM9pGb@localhost:5432 -c 'TRUNCATE transactions; TRUNCATE reports;' && \
     docker compose up -d redis && \
     docker compose exec redis redis-cli FLUSHALL && \
     docker compose up -d && \
-    time docker compose exec rails bin/rails 'generate_transactions_csv[100000]' && \
-    time docker compose exec rails bin/rails 'feed_transactions_to_sidekiq[100000_transactions.csv]' && \
-    docker compose logs -f sidekiq 
+    docker compose exec rails bin/rails 'generate_transactions_csv[100000]' && \
+    docker compose exec rails bin/rails 'feed_transactions_to_sidekiq[100000_transactions.csv]' && \
+    docker compose logs -f sidekiq
+# wait for Sidekiq to finish and then run:
+docker compose exec rails bin/rails generate_transaction_aggregations
 ```
 
 ### URLs
@@ -69,4 +83,5 @@ clear && \
 - right now the app is structured for an occasional imports. if we need to import and process the transactions continuosly, we could:
   - create a scheduled Sidekiq job for each of the rakes that we are now running manually
   - feed transactions to the queue in bulk using Redis protocol and in the format that is used by Sidekiq
+  - create the aggregations (Reports) from a read replica
 - PowerBI adapter

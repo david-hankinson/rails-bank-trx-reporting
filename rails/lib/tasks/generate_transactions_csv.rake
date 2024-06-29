@@ -10,7 +10,7 @@ task :generate_transactions_csv, [:rows] => :environment do |task, args|
 
     amounts = []
     1000.times do
-        amounts << format("%.2f", rand(-1000.00..1000.00))
+        amounts << format("%.2f", rand(-500.00..1000.00))
     end
 
     CSV.open("/rails/#{filename}", "w") do |csv|
