@@ -13,7 +13,7 @@ task :feed_transactions_to_sidekiq, [:csv, :batch_size] => :environment do |task
         batch << row
         
         if batchCount % args[:batch_size] === 0
-            UpsertTransactionJob.perform_async(batch)
+            InsertTransactionJob.perform_async(batch)
 
             puts batchCount.to_fs(:delimited)
 
@@ -21,7 +21,9 @@ task :feed_transactions_to_sidekiq, [:csv, :batch_size] => :environment do |task
         end
     end
 
-    UpsertTransactionJob.perform_async(batch)
+    unless batch.empty?
+        InsertTransactionJob.perform_async(batch) 
 
-    puts batchCount.to_fs(:delimited)
+        puts batchCount.to_fs(:delimited)
+    end
 end

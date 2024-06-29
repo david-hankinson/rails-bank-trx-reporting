@@ -43,6 +43,20 @@ services:
     ports:
       - 5432:5432
 
+  adminer:
+    image: adminer:4.8.1
+    depends_on:
+      - postgres
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+      - ADMINER_DEFAULT_USER=rails
+      - ADMINER_DEFAULT_PASSWORD=znsoorcM9pGb
+      - ADMINER_DEFAULT_TYPE=postgresql
+      - ADMINER_DEFAULT_PORT=5432
+      - ADMINER_DEFAULT_DB=rails
+    ports:
+      - 8082:8080
+
   redis:
     image: redis:7.2.3-alpine
     volumes:

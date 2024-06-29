@@ -44,6 +44,8 @@ gem "bootsnap", require: false
 
 gem 'sidekiq', '~> 7.1', '>= 7.1.2'
 gem "csv", "~> 3.3"
+gem "pg", "~> 1.5"
+gem "pgcrypto", "~> 0.4.1"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
