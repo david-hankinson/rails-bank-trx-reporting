@@ -54,7 +54,7 @@ This repository utilizes:
 - command line utilities:
   - [Docker](https://www.docker.com/) for stable environment
 
-[<img src="./docs/rails-bank-trx-reporting.gif" style="width: 100%; height: auto;"/>](./docs/rails-bank-trx-reporting.gif)
+![App Screencast](./docs/rails-bank-trx-reporting.gif)
 
 ## Usage
 
@@ -106,10 +106,60 @@ time docker compose exec rails bundle exec sidekiq
 # - 1M items in the queue: ~1.3 second
 # - 100M items in the queue: ~27.3 seconds
 time docker compose exec rails bin/rails generate_transaction_aggregations
+```
 
-# fetch the report for a given month
+### API Usage
+
+Fetch the report for a given month with the request below:
+
+```bash
 curl -sS http://localhost:3001/api/report/2024-01-01 | jq
+```
 
+that produces the following response:
+
+```json
+{
+  "id":"0d86eb02-1c22-40db-a8a2-7f5c3e96e99e",
+  "month":"2024-01-01",
+  "data":{
+    "agg":{
+      "AB":{
+        "transactionCount":2854863.0,
+        "min":22195324.12,
+        "max":22942673.74,
+        "avg":22690688.92
+      },
+      "BC":{
+        "transactionCount":2851787.0,
+        "min":22130265.99,
+        "max":22840328.52,
+        "avg":22449452.5
+      }
+    },
+    "days":{
+      "2024-01-01":{
+        "AB":{
+          "transactionCount":92608.0,
+          "balance":22819485.55
+        },
+        "BC":{
+          "transactionCount":91864.0,
+          "balance":22394157.76
+        }
+      }
+    }
+  },
+  "created_at":"2024-06-29T15:14:54.041Z",
+  "updated_at":"2024-06-29T15:14:54.041Z"
+}
+```
+
+Note that the response is shortened.
+
+### Reset and re-run everything
+
+```bash
 # run everything for 100K transactions in a single command as follows:
 # reset queue, database, run csv generation, feed sidekiq, process queue in a single command
 clear && \
@@ -132,7 +182,7 @@ docker compose exec rails bin/rails generate_transaction_aggregations
 - API http://localhost:3001/api/report/2024-01-01
 - Adminer http://localhost:8082/?server=postgres&username=rails&db=rails
 
-### TODOs / Possible enhancements
+## TODOs / Possible enhancements
 
 - add static code analysis / linter (Rubocop)
 - tests for CSV parsing and import
