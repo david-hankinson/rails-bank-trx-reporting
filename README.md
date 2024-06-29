@@ -1,4 +1,4 @@
-# Ruby on Rails 100M bank transactions import & reporting
+# Ruby on Rails & React.js 100M bank transactions import & reporting
 
 ## Instructions
 
@@ -17,6 +17,7 @@ Assumptions:
 - the CSV processing is either a one-time or occational job (if it was meant for a long-term usage, we would use at least an MVC pattern, split the database calls into services/providers)
 - the solution can be simplyfied for the sake of time spent on this take-home assignment (see TODOs section for next enhancements that can be made)
 - there is a single bank branch in each of the Canadian provinces, hence the branch codes AB, BC, ON, etc.
+- we should use Ruby and Ruby on Rails
 
 Solution:
 
@@ -33,6 +34,27 @@ Solution:
 Note: This repository and it's approach and current state of the functinoality is not a production-ready application.
 It was created as a base to build on top of. The list of things needed to be done to make the application
 production ready can be found at the bottom of this file in the TODOs section.
+
+This repository utilizes:
+
+- languages:
+  - [Ruby](https://www.ruby-lang.org/en/)
+  - [JavaScript](https://javascript.info/)
+  - [TypeScript](https://www.typescriptlang.org/)
+- frameworks
+  - [Ruby on Rails](https://rubyonrails.org/)
+  - [React.js](https://react.dev/) because it is one of the most widely used frontend frameworks and most companies requires to have experience with it
+  - [Vite](https://vitejs.dev/) for fast build, project startup and updates
+- architecture:
+- libraries:
+  - [date-fns](https://www.npmjs.com/package/date-fns) to make work with dates easier
+  - [Bootstrap](https://getbootstrap.com/) and [React Bootstrap](https://react-bootstrap.netlify.app/) UI kit, so we don't have to write our own components
+  - [React Query](https://tanstack.com/query/v3) for easier communication between components and caching
+  - [Axios](https://www.npmjs.com/package/axios) for API calls
+- command line utilities:
+  - [Docker](https://www.docker.com/) for stable environment
+
+@TODO insert gif here
 
 ## Usage
 
@@ -86,7 +108,7 @@ time docker compose exec rails bundle exec sidekiq
 time docker compose exec rails bin/rails generate_transaction_aggregations
 
 # fetch the report for a given month
-curl -sS http://localhost:3000/api/report/2024-01-01 | jq
+curl -sS http://localhost:3001/api/report/2024-01-01 | jq
 
 # run everything for 100K transactions in a single command as follows:
 # reset queue, database, run csv generation, feed sidekiq, process queue in a single command
@@ -107,6 +129,7 @@ docker compose exec rails bin/rails generate_transaction_aggregations
 ### URLs
 
 - Web http://localhost:3000
+- API http://localhost:3001/api/report/2024-01-01
 - Adminer http://localhost:8082/?server=postgres&username=rails&db=rails
 
 ### TODOs / Possible enhancements
