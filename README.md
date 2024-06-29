@@ -45,7 +45,6 @@ This repository utilizes:
   - [Ruby on Rails](https://rubyonrails.org/)
   - [React.js](https://react.dev/) because it is one of the most widely used frontend frameworks and most companies requires to have experience with it
   - [Vite](https://vitejs.dev/) for fast build, project startup and updates
-- architecture:
 - libraries:
   - [date-fns](https://www.npmjs.com/package/date-fns) to make work with dates easier
   - [Bootstrap](https://getbootstrap.com/) and [React Bootstrap](https://react-bootstrap.netlify.app/) UI kit, so we don't have to write our own components
@@ -136,6 +135,7 @@ docker compose exec rails bin/rails generate_transaction_aggregations
 
 - add static code analysis / linter (Rubocop)
 - tests for CSV parsing and import
+- add CORS configuration
 - add an authentication layer to both frontend and backend
 - split one large CSV into multiple files first, and then feed the files to Sidekiq queue in parallel
 - add ability to skip first N rows from the CSV when feeding the data to Sidekiq queue (in case we need to re-run a portion of a large csv)
@@ -145,3 +145,4 @@ docker compose exec rails bin/rails generate_transaction_aggregations
   - feed transactions to the queue in bulk using Redis protocol and in the format that is used by Sidekiq
   - create the aggregations (Reports) from a read replica
 - PowerBI adapter
+- use Redux instead of passing state to child components
