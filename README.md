@@ -9,6 +9,27 @@ Design & implement a system that can:
 
 The data file lines would contain a timestamp, a branch code, and amount.
 
+## Solution
+
+Assumptions:
+
+- we are meant to report dollar amounts per bank branch per month
+- the CSV processing is either a one-time or occational job (if it was meant for a long-term usage, we would use at least an MVC pattern, split the database calls into services/providers)
+- the solution can be simplyfied for the sake of time spent on this take-home assignment (see TODOs section for next enhancements that can be made)
+- there is a single bank branch in each of the Canadian provinces, hence the branch codes AB, BC, ON, etc.
+
+Solution:
+
+- Ruby on Rails backend that:
+  - generates the input CSV with 100M rows
+  - processes the CSV into transactions and reports using asynchronous processing and ability to scale
+  - provides a REST API endpoint to fetch the reports (this is used by our frontend and also can be used as a PowerBI data source)
+- React.js frontend that:
+  - fetches the reports from the backend
+  - displays the reports in a chart
+  - allows to view different months and compare different branches
+- performance metrics of the Rails app (see Usage part of this file)
+
 Note: This repository and it's approach and current state of the functinoality is not a production-ready application.
 It was created as a base to build on top of. The list of things needed to be done to make the application
 production ready can be found at the bottom of this file in the TODOs section.
@@ -88,10 +109,11 @@ docker compose exec rails bin/rails generate_transaction_aggregations
 - Web http://localhost:3000
 - Adminer http://localhost:8082/?server=postgres&username=rails&db=rails
 
-### TODOs / Next steps
+### TODOs / Possible enhancements
 
-- Taskfile
 - add static code analysis / linter (Rubocop)
+- tests for CSV parsing and import
+- add an authentication layer to both frontend and backend
 - split one large CSV into multiple files first, and then feed the files to Sidekiq queue in parallel
 - add ability to skip first N rows from the CSV when feeding the data to Sidekiq queue (in case we need to re-run a portion of a large csv)
 - scale the sidekiq queue workers
