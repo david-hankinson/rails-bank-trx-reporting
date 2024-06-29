@@ -13,6 +13,8 @@ The data file lines would contain a timestamp, a branch code, and amount.
 
 Assumptions:
 
+- all data belongs to a single bank, but multiple branches
+- the CSV contains credit and debit transactions of the bank's customers
 - we are meant to report dollar amounts per bank branch per month
 - the CSV processing is either a one-time or occational job (if it was meant for a long-term usage, we would use at least an MVC pattern, split the database calls into services/providers)
 - the solution can be simplyfied for the sake of time spent on this take-home assignment (see TODOs section for next enhancements that can be made)
