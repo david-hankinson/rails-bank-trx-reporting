@@ -21,6 +21,11 @@ Assumptions:
 
 Solution:
 
+- Postgresql
+  - primary data storage
+  - contains seeded data for easy project startup
+- Redis
+  - used by Sidekiq as a queue
 - Ruby on Rails backend that:
   - generates the input CSV with 100M rows
   - processes the CSV into transactions and reports using asynchronous processing and ability to scale
@@ -60,6 +65,7 @@ This repository utilizes:
 
 ```bash
 # start project
+# the first start might take a minute or two until the data gets imported into the postgres database
 docker compose up -d
 
 # clear everything from the Sidekiq's queue
