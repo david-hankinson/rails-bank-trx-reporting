@@ -50,6 +50,7 @@ This repository utilizes:
   - [Bootstrap](https://getbootstrap.com/) and [React Bootstrap](https://react-bootstrap.netlify.app/) UI kit, so we don't have to write our own components
   - [React Query](https://tanstack.com/query/v3) for easier communication between components and caching
   - [Axios](https://www.npmjs.com/package/axios) for API calls
+  - [Chart.js](https://www.chartjs.org/) for.. you guesed it.. charts `:)`
 - command line utilities:
   - [Docker](https://www.docker.com/) for stable environment
 

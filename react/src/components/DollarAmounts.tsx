@@ -13,7 +13,7 @@ function DollarAmounts({ report }: P) {
   });
 
   return (
-    <table className="table table-striped table-hover">
+    <table className="table table-striped table-hover mb-5">
       <thead>
         <tr>
           <th scope="col">Branch</th>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import DollarAmounts from "./DollarAmounts";
 import MonthFilter from "./MonthFilter";
 import { Report } from "../types/Report";
+import Chart from "./Chart";
 
 function ReportPage() {
   const [month, setMonth] = useState(
@@ -27,7 +28,10 @@ function ReportPage() {
       {isFetching || !data ? (
         <>Fetching report...</>
       ) : (
-        <DollarAmounts report={data} />
+        <>
+          <DollarAmounts report={data} />
+          <Chart report={data} />
+        </>
       )}
     </>
   );
