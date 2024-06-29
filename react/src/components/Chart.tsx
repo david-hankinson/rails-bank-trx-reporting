@@ -48,11 +48,12 @@ function Chart({ report }: P) {
 
   const data = {
     labels: Object.keys(report.data.days),
-    datasets: branches.map((branch: string) => ({
+    datasets: allBranches.map((branch: string) => ({
       label: branch,
       data: Object.keys(report.data.days).map(
         (day: string) => report.data.days[day][branch].balance
       ),
+      hidden: !branches.includes(branch),
     })),
   };
 
