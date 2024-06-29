@@ -21,7 +21,7 @@ function App() {
           <p>
             Created by:{" "}
             <a href="https://www.linkedin.com/in/tomastibensky/">@ttibensky</a>,
-            in July, 2024
+            in June, 2024
           </p>
         </footer>
       </div>
