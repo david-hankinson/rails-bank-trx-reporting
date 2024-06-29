@@ -1,6 +1,15 @@
 # Ruby on Rails 100M bank transactions import & reporting
 
-This repository and it's approach and current state of the functinoality is not a production-ready application.
+## Instructions
+
+Design & implement a system that can:
+
+- load a data file containing at least 100M financial transactions
+- report the minimum, maximum, and average dollar amounts per bank branch.
+
+The data file lines would contain a timestamp, a branch code, and amount.
+
+Note: This repository and it's approach and current state of the functinoality is not a production-ready application.
 It was created as a base to build on top of. The list of things needed to be done to make the application
 production ready can be found at the bottom of this file in the TODOs section.
 
@@ -38,11 +47,14 @@ time docker compose exec rails bin/rails 'feed_transactions_to_sidekiq[100000000
 
 # process Sidekiq queue
 #
+# note: there is a separate Sidekiq container that is processing anything put into the queue right away
+# this command is here for the performance measures
+#
 # on the authors development machine, the execution time was as follows:
 # - 1K items in the queue: <1s second
 # - 1M items in the queue: ~15 seconds
 # - 100M items in the queue: ~33.5 minutes
-bundle exec sidekiq
+time docker compose exec rails bundle exec sidekiq
 
 # generate reports from imported transactions
 #
@@ -51,6 +63,9 @@ bundle exec sidekiq
 # - 1M items in the queue: ~1.3 second
 # - 100M items in the queue: ~27.3 seconds
 time docker compose exec rails bin/rails generate_transaction_aggregations
+
+# fetch the report for a given month
+curl -sS http://localhost:3000/api/report/2024-01-01 | jq
 
 # run everything for 100K transactions in a single command as follows:
 # reset queue, database, run csv generation, feed sidekiq, process queue in a single command

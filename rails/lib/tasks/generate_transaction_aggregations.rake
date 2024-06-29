@@ -10,8 +10,8 @@ task :generate_transaction_aggregations => :environment do |task|
 
             report[:data][string_date] ||= {}
             report[:data][string_date][branch] ||= {}
-            report[:data][string_date][branch][data_key] ||= 0
-            report[:data][string_date][branch][data_key] += value
+            report[:data][string_date][branch][data_key] ||= 0.00
+            report[:data][string_date][branch][data_key] += value.to_f
         end
     end
 
