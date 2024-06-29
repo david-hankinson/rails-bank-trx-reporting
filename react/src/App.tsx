@@ -6,7 +6,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="container">
+      <div className="container py-5">
         <header className="mb-5">
           <h1>
             Ruby on Rails & React.js 100M bank transactions import & reporting

@@ -54,7 +54,7 @@ This repository utilizes:
 - command line utilities:
   - [Docker](https://www.docker.com/) for stable environment
 
-@TODO insert gif here
+![App Screencast](./docs/rails-bank-trx-reporting.gif)
 
 ## Usage
 
