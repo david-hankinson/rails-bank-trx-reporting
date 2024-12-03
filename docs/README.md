@@ -1,4 +1,4 @@
-# Creating and managing the diagram with mingrammer
+# Diagrams lets you draw the system architecture in Python code
 
 Here we can use a `Diagram as code approach` to visualise this application
 
