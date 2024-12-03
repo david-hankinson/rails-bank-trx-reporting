@@ -4,7 +4,7 @@ from diagrams.onprem.database import PostgreSQL
 from diagrams.onprem.inmemory import Redis
 from diagrams.generic.device import Tablet
 
-with Diagram("rails-bank-trx-reporting", show=True):
+with Diagram("rails-bank-trx-reporting-localhost", show=True):
     User = Tablet("User's laptop")
 
     with Cluster("Localhost"):
