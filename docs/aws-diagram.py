@@ -6,13 +6,19 @@ from diagrams.aws.network import ElbApplicationLoadBalancer
 from diagrams.generic.device import Tablet
 from diagrams.aws.compute import EC2ContainerRegistry
 from diagrams.aws.storage import ElasticFileSystemEFSFileSystem
+from diagrams.aws.security import IAM
+from diagrams.aws.management import Cloudtrail, Cloudwatch
 
 with (Diagram("rails-bank-trx-reporting-aws", show=True)):
     User = Tablet("User's laptop")
 
     with Cluster("AWS VPC"):
-        ApplicationLoadBalancer = ElbApplicationLoadBalancer("ALB")
-        EC2ContainerRegistry = EC2ContainerRegistry("ECR")
+        with Cluster("AWS Resources"):
+            ApplicationLoadBalancer = ElbApplicationLoadBalancer("ALB")
+            EC2ContainerRegistry = EC2ContainerRegistry("ECR")
+            IAM = IAM("IAM")
+            # Cloudtrail = Cloudtrail("Cloudtrail")
+            # Cloudwatch = Cloudwatch("Cloudwatch")
 
         with Cluster("ECS Cluster"):
 
