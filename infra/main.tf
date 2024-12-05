@@ -3,6 +3,6 @@ terraform {
 }
 
 output "helloworld" {
-  description = "Helloworld"
+  description =         "Helloworld"
   value       = "Helloworld"
 }
