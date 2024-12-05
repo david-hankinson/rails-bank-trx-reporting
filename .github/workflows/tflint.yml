@@ -2,12 +2,12 @@ name: 'TFLint'
 description: 'Sets up tflint CLI in your GitHub Actions workflow'
 
 on:
-pull_request:
-  branches:
+  pull_request:
+    branches:
+     - main
+  push:
+   branches:
    - main
-push:
- branches:
- - main
 
 inputs:
   tflint_version:
