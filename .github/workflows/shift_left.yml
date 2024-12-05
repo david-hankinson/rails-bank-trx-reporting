@@ -40,7 +40,7 @@
          uses: terraform-docs/gh-actions@main
          with:
           working-dir: .
-          output-file: tfdocs.md
+          output-file: ./infra/tfdocs.md
           output-method: inject
           git-push: "true"
 
