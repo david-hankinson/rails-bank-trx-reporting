@@ -1,6 +1,6 @@
    # .github/workflows/deploy.yml
 
-   name: Terraform Deployment
+   name: tfdeploy
 
    on:
      push:
