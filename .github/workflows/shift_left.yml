@@ -31,15 +31,20 @@
          run: tflint
 
        # Step 2: Generate documentation with tfdocs
-       - name: Install tfdocs
-         run: |
-           curl -L https://raw.githubusercontent.com/terraform-docs/terraform-docs/main/install.sh | bash
+       - name: Generate terraform docs
+         uses: actions/checkout@v3
+         with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
-       - name: Run terraform docs
-         working-directory: ./infra
-         run: terraform-docs markdown table --output-file README.md .
+       - name: Render terraform docs and push changes back to PR
+         uses: terraform-docs/gh-actions@main
+         with:
+          working-dir: .
+          output-file: README.md
+          output-method: inject
+          git-push: "true"
 
-       # Step 3: Terraform Plan
+         # Step 3: Terraform Plan
        - name: Terraform Init
          working-directory: ./infra
          run: terraform init
