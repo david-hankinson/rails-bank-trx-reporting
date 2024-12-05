@@ -205,3 +205,29 @@ docker compose exec rails bin/rails generate_transaction_aggregations
   - create the aggregations (Reports) from a read replica
 - PowerBI adapter
 - use Redux instead of passing state to child components
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+No requirements.
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->
