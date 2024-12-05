@@ -1,0 +1,31 @@
+name: 'Setup TFLint'
+description: 'Sets up tflint CLI in your GitHub Actions workflow'
+inputs:
+  tflint_version:
+    description: TFLint version to install
+    required: false
+    default: latest
+  github_token:
+    description: GitHub token - used when getting the latest version of tflint
+    required: false
+    default: ${{ github.server_url == 'https://github.com' && github.token || '' }}
+  tflint_wrapper:
+    description: Installs a wrapper script to wrap subsequent calls to `tflint` and expose `stdout`, `stderr`, and `exitcode` outputs
+    default: 'false'
+    required: false
+  checksums:
+    description: Newline-delimited list of valid checksums (SHA256 hashes) for the downloaded TFLint binary. When set, the action will verify that the binary matches one of these checksums before proceeding.
+    required: false
+outputs:
+  stdout:
+    description: The output (stdout) produced by the tflint command. Only available if `tflint_wrapper` is set to `true`.
+  stderr:
+    description: The error output (stderr) produced by the tflint command. Only available if `tflint_wrapper` is set to `true`.
+  exitcode:
+    description: The exit code produced by the tflint command. Only available if `tflint_wrapper` is set to `true`.
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+branding:
+  icon: 'terminal'
+  color: 'purple'
