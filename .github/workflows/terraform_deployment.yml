@@ -1,0 +1,35 @@
+   # .github/workflows/deploy.yml
+
+   name: Terraform Deployment
+
+   on:
+     push:
+       branches:
+         - main  # Run this on pushes to the main branch
+
+   jobs:
+     terraform:
+       runs-on: ubuntu-latest
+
+       steps:
+       - name: Checkout repository
+         uses: actions/checkout@v3
+
+       - name: Set up Terraform
+         uses: hashicorp/setup-terraform@v2
+         with:
+           terraform_version: 1.3.0  # Specify the Terraform version you want to use
+
+       - name: Terraform Init
+         working-directory: ./infra
+         run: terraform init
+
+       - name: Terraform Plan
+         id: plan
+         working-directory: ./infra
+         run: terraform plan
+
+       - name: Terraform Apply
+         if: github.ref == 'refs/heads/main'  # Ensure this only runs on main branch
+         working-directory: ./infra
+         run: terraform apply -auto-approve
