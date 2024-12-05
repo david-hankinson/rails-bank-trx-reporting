@@ -1,0 +1,58 @@
+   name: Shift Left
+
+   on:
+     pull_request:
+       branches:
+         - main
+     push:
+       branches:
+         - main
+
+   jobs:
+     lint_docs_plan_test:
+       runs-on: ubuntu-latest
+
+       steps:
+       - name: Checkout repository
+         uses: actions/checkout@v3
+
+       - name: Set up Terraform
+         uses: hashicorp/setup-terraform@v2
+         with:
+           terraform_version: 1.3.0
+
+       # Step 1: Lint with tflint
+       - name: Install tflint
+         run: |
+           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+       - name: Run tflint
+         working-directory: ./infra
+         run: tflint
+
+       # Step 2: Generate documentation with tfdocs
+       - name: Install tfdocs
+         run: |
+           curl -L https://raw.githubusercontent.com/terraform-docs/terraform-docs/main/install.sh | bash
+
+       - name: Run terraform docs
+         working-directory: ./infra
+         run: terraform-docs markdown table --output-file README.md .
+
+       # Step 3: Terraform Plan
+       - name: Terraform Init
+         working-directory: ./infra
+         run: terraform init
+
+       - name: Terraform Plan
+         id: plan
+         working-directory: ./infra
+         run: terraform plan
+
+       # Step 4: Terraform Testing with checkov
+       - name: Install Checkov
+         run: pip install checkov
+
+       - name: Run Checkov for security testing
+         working-directory: ./infra
+         run: checkov -d .
