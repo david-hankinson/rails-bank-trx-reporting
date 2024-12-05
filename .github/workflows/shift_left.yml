@@ -23,9 +23,10 @@
 
        # Step 1: Lint with tflint
        - name: Install tflint
-         terraform_version: 1.10.1
          run: |
            curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+         with:
+           terraform_version: 1.10.1
 
        - name: Run tflint
          working-directory: ./infra
