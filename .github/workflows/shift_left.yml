@@ -1,69 +1,83 @@
-   name: Shift Left
+name: Shift Left
 
-   on:
-     pull_request:
-       branches:
-         - main
-     push:
-       branches:
-         - main
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
-   jobs:
-     lint_docs_plan_test:
-       runs-on: ubuntu-latest
+jobs:
+  lint_docs_plan_test:
+    runs-on: ubuntu-latest
 
-       steps:
-       - name: Checkout repository
-         uses: actions/checkout@v3
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-       - name: Set up Terraform
-         uses: hashicorp/setup-terraform@v2
-         with:
-           terraform_version: 1.10.1
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.10.1
 
-       # Step 1: Lint with tflint
-       - uses: terraform-linters/setup-tflint@v4
-         name: Setup TFLint
-         with:
-          tflint_version: v0.52.0
+    - name: 'Setup TFLint'
+      description: 'Sets up tflint CLI in your GitHub Actions workflow'
+      with:
+        tflint_version:
+          description: TFLint version to install
+          required: false
+          default: latest
+        github_token:
+          description: GitHub token - used when getting the latest version of tflint
+          required: false
+          default: ${{ github.server_url == 'https://github.com' && github.token || '' }}
+        tflint_wrapper:
+          description: Installs a wrapper script to wrap subsequent calls to `tflint` and expose `stdout`, `stderr`, and `exitcode` outputs
+          default: 'false'
+          required: false
+        checksums:
+          description: Newline-delimited list of valid checksums (SHA256 hashes) for the downloaded TFLint binary. When set, the action will verify that the binary matches one of these checksums before proceeding.
+          required: false
+      outputs:
+        stdout:
+          description: The output (stdout) produced by the tflint command. Only available if `tflint_wrapper` is set to `true`.
+        stderr:
+          description: The error output (stderr) produced by the tflint command. Only available if `tflint_wrapper` is set to `true`.
+        exitcode:
+          description: The exit code produced by the tflint command. Only available if `tflint_wrapper` is set to `true`.
+      runs:
+        using: 'node20'
+        main: 'dist/index.js'
+      branding:
+        icon: 'terminal'
+        color: 'purple'
 
-       - name: Show version
-         run: tflint --version
+    - name: Generate terraform docs
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
 
-       - name: Init TFLint
-         run: tflint --init
+    - name: Render terraform docs and push changes back to PR
+      uses: terraform-docs/gh-actions@main
+      with:
+        working-dir: .
+        output-file: ./infra/tfdocs.md
+        output-method: inject
+        git-push: "true"
 
-       - name: Run TFLint
-         run: tflint -f compact
+    - name: Terraform Init
+      working-directory: ./infra
+      run: terraform init
 
-       # Step 2: Generate documentation with tfdocs
-       - name: Generate terraform docs
-         uses: actions/checkout@v3
-         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+    - name: Terraform Plan
+      id: plan
+      working-directory: ./infra
+      run: terraform plan
 
-       - name: Render terraform docs and push changes back to PR
-         uses: terraform-docs/gh-actions@main
-         with:
-          working-dir: .
-          output-file: ./infra/tfdocs.md
-          output-method: inject
-          git-push: "true"
+    - name: Install Checkov
+      run: pip install checkov
 
-         # Step 3: Terraform Plan
-       - name: Terraform Init
-         working-directory: ./infra
-         run: terraform init
-
-       - name: Terraform Plan
-         id: plan
-         working-directory: ./infra
-         run: terraform plan
-
-       # Step 4: Terraform Testing with checkov
-       - name: Install Checkov
-         run: pip install checkov
-
-       - name: Run Checkov for security testing
-         working-directory: ./infra
-         run: checkov -d .
+    - name: Run Checkov for security testing
+      working-directory: ./infra
+      run: checkov -d .
