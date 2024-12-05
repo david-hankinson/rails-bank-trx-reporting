@@ -22,15 +22,19 @@
            terraform_version: 1.10.1
 
        # Step 1: Lint with tflint
-       - name: Install tflint
-         run: |
-           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+       - uses: terraform-linters/setup-tflint@v4
+         name: Setup TFLint
+         with:
+          tflint_version: v0.52.0
 
-       - name: Run tflint
-         working-directory: ./infra
-         run: |
-           tflint || echo "Warning: tflint found issues"
-         continue-on-error: true
+       - name: Show version
+         run: tflint --version
+
+       - name: Init TFLint
+         run: tflint --init
+
+       - name: Run TFLint
+         run: tflint -f compact
 
        # Step 2: Generate documentation with tfdocs
        - name: Generate terraform docs
