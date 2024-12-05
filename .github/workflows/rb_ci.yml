@@ -12,8 +12,6 @@ on:
 jobs:
   ci_validation:
     runs-on: ubuntu-latest
-    env:
-      RAILS_ENV: test
 
     services:
       postgres:
