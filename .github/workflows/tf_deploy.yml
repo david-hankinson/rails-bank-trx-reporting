@@ -1,6 +1,6 @@
    # .github/workflows/deploy.yml
 
-   name: tfdeploy
+   name: tf_deploy
 
    on:
      push:

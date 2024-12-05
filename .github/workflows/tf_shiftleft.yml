@@ -1,4 +1,4 @@
-   name: tfshiftleft
+   name: tf_shiftleft
 
    on:
      pull_request:
