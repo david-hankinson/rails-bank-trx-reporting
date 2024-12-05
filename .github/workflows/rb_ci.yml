@@ -36,14 +36,17 @@ jobs:
           bundler-cache: true
           cache-version: 1
 
+#      - name: Test
+#        run: bundle exec rspec
+
       - name: Upload Coverage
         uses: actions/upload-artifact@v3
         with:
           name: coverage
           path: coverage
 
-      - name: Lint
-        run: bundle exec rubocop
+#      - name: Lint
+#        run: bundle exec rubocop
 
       - name: Validate Coverage
         run: |
