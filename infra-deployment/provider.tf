@@ -6,10 +6,8 @@ terraform {
     backend "s3" {
       bucket         = "rails-bank-trx-reporting"
        key            = "terraform.tfstate"
-       region         = local.region
        encrypt        = true
     }
-
   }
 }
 module "ecr" {
