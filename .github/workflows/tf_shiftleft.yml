@@ -27,7 +27,7 @@
            curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
        - name: Run tflint
-         working-directory: ./infra-deployment
+         working-directory: /infra-deployment
          run: tflint
          continue-on-error: true
 
@@ -41,7 +41,7 @@
          uses: terraform-docs/gh-actions@main
          with:
           working-dir: .
-          output-file: ./infra-deployment/tfdocs.md
+          output-file: /infra-deployment/tfdocs.md
           output-method: inject
           git-push: "true"
 
