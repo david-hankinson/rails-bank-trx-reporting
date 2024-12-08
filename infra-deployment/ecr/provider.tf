@@ -2,8 +2,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.54.1"
     }
+    backend "s3" {
+      bucket         = "rails-bank-trx-reporting"
+       key            = "terraform.tfstate"
+       region         = local.region
+       encrypt        = true
+    }
+
   }
 }
 module "ecr" {
