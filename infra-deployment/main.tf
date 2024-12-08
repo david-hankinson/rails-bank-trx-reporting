@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "hello_world_repo" {
-  name = "hello-world-repo"
-
+  name = "rails-bank-trx-reporting"
+  repository_name = "rails-bank-trx-reporting"
 }
 
 output "repository_url" {
