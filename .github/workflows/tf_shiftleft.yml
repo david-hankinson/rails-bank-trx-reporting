@@ -27,7 +27,7 @@
            curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
        - name: Run tflint
-         working-directory: ./infra
+         working-directory: ./infra-deployment
          run: tflint
          continue-on-error: true
 
@@ -41,18 +41,18 @@
          uses: terraform-docs/gh-actions@main
          with:
           working-dir: .
-          output-file: ./infra/tfdocs.md
+          output-file: ./infra-deployment/tfdocs.md
           output-method: inject
           git-push: "true"
 
          # Step 3: Terraform Plan
        - name: Terraform Init
-         working-directory: ./infra
+         working-directory: ./infra-deployment
          run: terraform init
 
        - name: Terraform Plan
          id: plan
-         working-directory: ./infra
+         working-directory: ./infra-deployment
          run: terraform plan
 
        # Step 4: Terraform Testing with checkov
@@ -60,5 +60,5 @@
          run: pip install checkov
 
        - name: Run Checkov for security testing
-         working-directory: ./infra
+         working-directory: ./infra-deployment
          run: checkov -d .
