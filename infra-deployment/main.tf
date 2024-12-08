@@ -19,11 +19,11 @@ module "ecr" {
   #         type = "expire"
   #       }
   #     }
-    ]
-  })
-
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
+  #   ]
+  # })
+  #
+  # tags = {
+  #   Terraform   = "true"
+  #   Environment = "dev"
+  # }
 }
