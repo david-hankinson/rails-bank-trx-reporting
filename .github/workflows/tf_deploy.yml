@@ -37,9 +37,9 @@
        - name: Terraform Plan
          id: plan
          working-directory: infra-deployment
-         run: terraform plan -var-file=infra-deployment/env/prod/terraform.tfvars
+         run: terraform plan -var-file=env/prod/terraform.tfvars
 
        - name: Terraform Apply
          if: github.ref == 'refs/heads/main'  # Ensure this only runs on main branch
          working-directory: infra-deployment
-         run: terraform apply -var-file=infra-deployment/env/prod/terraform.tfvars -auto-approve
+         run: terraform apply -var-file=env/prod/terraform.tfvars -auto-approve
