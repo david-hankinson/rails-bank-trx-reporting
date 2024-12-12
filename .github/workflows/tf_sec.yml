@@ -6,16 +6,15 @@
 name: tf_sec
 
 on:
-  on:
-    workflow_run:
-      workflows: [ "tf_shiftleft" ]
-      types:
-        - completed
-# schedule:
-  # - cron: '26 19 * * 6'
+
+  workflow_run:
+    workflows: [ "tf_shiftleft" ]
+    types:
+      - completed
+
 
 jobs:
-  tfsec:
+  tf_sec:
     name: Run tfsec sarif report
     runs-on: ubuntu-latest
     permissions:
