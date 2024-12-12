@@ -63,9 +63,9 @@
          run: terraform plan -var-file=env/prod/terraform.tfvars
 
        # Step 4: Terraform Testing with checkov
-       - name: Install Checkov
-         run: pip install checkov
-
-       - name: Run Checkov for security testing
-         working-directory: infra-deployment
-         run: checkov -d . --download-external-modules
+       - name: Checkov GitHub Action
+         uses: bridgecrewio/checkov-action@v12
+         with:
+          # This will add both a CLI output to the console and create a results.sarif file
+          output_format: cli,sarif
+          output_file_path: console,results.sarif
