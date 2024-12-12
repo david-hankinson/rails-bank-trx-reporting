@@ -55,12 +55,12 @@
          # Step 3: Terraform Plan
        - name: Terraform Init
          working-directory: infra-deployment
-         run: terraform init
+         run: terraform init -var-file=infra-deployment/env/prod/terraform.tfvars
 
        - name: Terraform Plan
          id: plan
          working-directory: infra-deployment
-         run: terraform plan
+         run: terraform plan -var-file=infra-deployment/env/prod/terraform.tfvars
 
        # Step 4: Terraform Testing with checkov
        - name: Install Checkov
