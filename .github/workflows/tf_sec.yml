@@ -6,10 +6,11 @@
 name: tf_sec
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  on:
+    workflow_run:
+      workflows: [ "tf_shiftleft" ]
+      types:
+        - completed
 # schedule:
   # - cron: '26 19 * * 6'
 
