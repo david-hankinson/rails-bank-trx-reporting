@@ -68,4 +68,4 @@
 
        - name: Run Checkov for security testing
          working-directory: infra-deployment
-         run: checkov -d .
+         run: checkov -d . --download-external-modules
