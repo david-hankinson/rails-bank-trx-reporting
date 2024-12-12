@@ -4,9 +4,9 @@
 
    on:
     workflow_run:
-    workflows: [ "tf_sec" ]
-    types:
-      - completed
+      workflows: [ "tf_sec" ]
+      types:
+        - completed
 
    jobs:
 
