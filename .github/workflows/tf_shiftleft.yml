@@ -9,7 +9,7 @@
          - main
 
    jobs:
-     lint_docs_plan_test:
+     tf_shiftleft:
        runs-on: ubuntu-latest
 
        steps:
