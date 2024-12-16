@@ -1,5 +1,5 @@
-resource "aws_security_group" "http_https_sg" {
-  name   = "http-https-security-group"
+resource "aws_security_group" "this" {
+  name   = "${var.env}-sg"
   vpc_id = aws_vpc.this.id
 
   # Ingress rule for HTTP

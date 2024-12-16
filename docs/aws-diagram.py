@@ -9,7 +9,7 @@ from diagrams.aws.storage import ElasticFileSystemEFSFileSystem
 from diagrams.aws.security import IAM
 from diagrams.aws.management import Cloudtrail, Cloudwatch
 
-with (Diagram("rails-bank-trx-reporting-aws", show=True)):
+with (Diagram("rails-bank-trx-vpc-aws", show=True)):
     User = Tablet("User's laptop")
 
     with Cluster("AWS VPC"):

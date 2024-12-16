@@ -2,30 +2,38 @@ variable "github_repo" {}
 
 variable "env" {
   description = "The environment to deploy to"
-  type = string
+  type        = string
 }
 
 variable "vpc_cidr_block" {
   description = "CIDR block for VPC"
-  type = string
+  type        = string
 }
 
 variable "availability_zones" {
   description = "AZ's for subnets"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "region" {
   description = "AWS region"
-  type = string
+  type        = string
 }
 
 variable "private_subnets" {
   description = "Private subnets"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "public_subnets" {
   description = "Public subnets"
-  type = list(string)
+  type        = list(string)
+}
+
+variable "image_id" {
+  description = "ecs image ami id"
+}
+
+variable "instance_type" {
+  description = "ecs instance type"
 }
