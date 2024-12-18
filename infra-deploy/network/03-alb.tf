@@ -1,8 +1,8 @@
-resource "aws_lb" "main" {
+resource "aws_lb" "this" {
   name               = "${var.env}-alb"
   internal           = false                         # Public-facing ALB
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.this[*].id]  # ALB security group
+  git security_groups = [for sg in aws_security_group.this : sg.id] #  # ALB security groups
   subnets            = aws_subnet.public[*].id       # Use public subnets
 
   enable_deletion_protection = false
@@ -11,7 +11,7 @@ resource "aws_lb" "main" {
   }
 }
 
-resource "aws_lb_target_group" "main" {
+resource "aws_lb_target_group" "this" {
   name     = "${var.env}-tg"
   port     = 80
   protocol = "HTTP"
@@ -31,12 +31,12 @@ resource "aws_lb_target_group" "main" {
 }
 
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.main.arn
+  load_balancer_arn = aws_lb.this.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.main.arn
+    target_group_arn = aws_lb_target_group.this.arn
   }
 }

@@ -24,7 +24,7 @@
      ])
 
      type              = "ingress"
-     security_group_id = aws_security_group.dynamic[each.value.sg_name].id
+     security_group_id = aws_security_group.this[each.value.sg_name].id
      from_port         = each.value.from_port
      to_port           = each.value.to_port
      protocol          = each.value.protocol
@@ -47,7 +47,7 @@
      ])
 
      type              = "egress"
-     security_group_id = aws_security_group.dynamic[each.value.sg_name].id
+     security_group_id = aws_security_group.this[each.value.sg_name].id
      from_port         = each.value.from_port
      to_port           = each.value.to_port
      protocol          = each.value.protocol
