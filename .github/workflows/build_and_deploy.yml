@@ -54,7 +54,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install docker-compose
-      uses:
+      uses: hoverkraft-tech/compose-action@v0.0.0
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -69,7 +69,6 @@ jobs:
 
     - name: Build, tag, and push images to Amazon ECR
       id: build-images
-      uses: hoverkraft-tech/compose-action@v0.0.0
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
