@@ -19,5 +19,5 @@ EOF
 }
 
 locals {
-  region = ca-central-1
+  region = "ca-central-1"
 }
