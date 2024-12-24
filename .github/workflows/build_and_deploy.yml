@@ -74,26 +74,10 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        # Extract service names from docker-compose.yml
-          SERVICES=$(docker-compose config --services)
-
-          # Iterate over each service, build, tag, and push its image
-          for SERVICE in $SERVICES
+        for r in $(grep 'image: \${DOCKER_REGISTRY}' docker-compose.yml | sed -e 's/^.*\///')
           do
-            IMAGE_NAME="$ECR_REGISTRY/$ECR_PREFIX/$SERVICE:$IMAGE_TAG"
-            
-            # Build the service's image using docker-compose
-            docker-compose build $SERVICE
-            
-            # Tag the image for ECR
-            docker tag $SERVICE:latest $IMAGE_NAME
-            
-            # Push the image to ECR
-            docker push $IMAGE_NAME
-
-            # Output the image URI to GitHub Actions for future reference
-            echo "$SERVICE-image=$IMAGE_NAME" >> $GITHUB_OUTPUT
-          done
+        aws ecr create-image --image-name "$r"
+        done
 #
 #    - name: Fill in the new image ID in the Amazon ECS task definition
 #      id: task-def

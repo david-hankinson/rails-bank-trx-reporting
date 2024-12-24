@@ -1,11 +1,20 @@
 terraform {
-  source = "./network"
+  source = "../../infra-modules/network/"
+}
+
+include "root" {
+  path = find_in_parent_folders("root.hcl")
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
 }
 
 inputs = {
   # Environment
-  env                      = "dev"
-  region                   = "ca-central-1"
+  region                   = include.root.locals.region
   availability_zones       = ["ca-central-1a", "ca-central-1b", "ca-central-1c"]
 
   # VPC Configuration
@@ -95,5 +104,20 @@ inputs = {
         Env  = "dev"
       }
     }
+  }
+}
+
+remote_state {
+  backend = "s3"
+  generate = {
+    path      = "rails-bank-trx-reporting-deploy-state.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+
+  config = {
+    bucket  = "prod-rails-bank-trx-reporting-deploy"
+    key     = "ecr.terraform.tfstate"
+    region  = "ca-central-1"
+    encrypt = true
   }
 }

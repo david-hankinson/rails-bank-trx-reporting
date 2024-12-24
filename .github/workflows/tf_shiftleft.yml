@@ -52,15 +52,15 @@
           output-method: inject
           git-push: "true"
 
-         # Step 3: Terraform Plan
-       - name: Terraform Init
-         working-directory: infra-deployment
-         run: terraform init -var-file=env/prod/terraform.tfvars
-
-       - name: Terraform Plan
-         id: plan
-         working-directory: infra-deployment
-         run: terraform plan -var-file=env/prod/terraform.tfvars
+#         # Step 3: Terraform Plan
+#       - name: Terraform Init
+#         working-directory: infra-deployment
+#         run: terraform init -var-file=env/prod/terraform.tfvars
+#
+#       - name: Terraform Plan
+#         id: plan
+#         working-directory: infra-deployment
+#         run: terraform plan -var-file=env/prod/terraform.tfvars
 
        # Step 4: Terraform Testing with checkov
        - name: Checkov GitHub Action

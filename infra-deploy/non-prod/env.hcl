@@ -1,0 +1,3 @@
+locals {
+    env = "non-prod"
+}
