@@ -14,6 +14,7 @@ include "env" {
 
 inputs = {
   # Environment
+  env                      = include.env.locals.env
   region                   = include.env.locals.region
   availability_zones       = ["ca-central-1a", "ca-central-1b", "ca-central-1d"]
 
