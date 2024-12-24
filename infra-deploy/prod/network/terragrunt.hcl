@@ -14,7 +14,7 @@ include "env" {
 
 inputs = {
   # Environment
-  region                   = include.env.locals.region
+  region                   = root.locals.region
   availability_zones       = ["ca-central-1a", "ca-central-1b", "ca-central-1d"]
 
   # VPC Configuration
