@@ -1,0 +1,54 @@
+name: ecr-build-deploy
+
+on:
+  push:
+    branches:
+      - main # Runs on pushes to the main branch
+
+env:
+  AWS_REGION: ca-central-1                  # set this to your preferred AWS region, e.g. us-west-1
+  # ECR_REPOSITORY: ECR_REPOSITORY
+
+#permissions:
+#  id-token: write # Allows GitHub Actions to use OIDC
+#  contents: read
+
+jobs:
+  terragrunt-plan-apply:
+    name: terragrunt-plan-apply
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Configure AWS credentials using OIDC
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1
+
+      # Hello from AWS: WhoAmI
+      - name: Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity
+
+      - name: 'Terragrunt Plan'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_subcommand: 'plan'
+          tf_actions_working_dir: './infra-deploy/prod/network'
+          args: '--terragrunt-non-interactive'
+
+      - name: 'Terragrunt Apply'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: './infra-deploy/prod/network'
+          args: '--terragrunt-non-interactive'
+
+
+

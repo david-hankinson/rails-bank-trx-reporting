@@ -1,72 +1,72 @@
-   name: tf_shiftleft
-
-   on:
-     pull_request:
-       branches:
-         - main
-     push:
-       branches:
-         - main
-
-   jobs:
-     tf_shiftleft:
-       runs-on: ubuntu-latest
-
-       steps:
-       - name: Checkout repository
-         uses: actions/checkout@v3
-
-       - name: Set up Terraform
-         uses: hashicorp/setup-terraform@v2
-         with:
-           terraform_version: 1.10.1
-
-       - name: Configure AWS credentials
-         uses: aws-actions/configure-aws-credentials@v1
-         with:
-           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           aws-region: ca-central-1
-
-       # Step 1: Lint with tflint
-       - name: Install tflint
-         run: |
-           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-
-       - name: Run tflint
-         working-directory: infra-deployment
-         run: tflint
-         continue-on-error: true
-
-       # Step 2: Generate documentation with tfdocs
-       - name: Generate terraform docs
-         uses: actions/checkout@v3
-         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-
-       - name: Render terraform docs and push changes back to PR
-         uses: terraform-docs/gh-actions@main
-         with:
-          working-dir: .
-          output-file: infra-deployment/tfdocs.md
-          output-method: inject
-          git-push: "true"
-
-#         # Step 3: Terraform Plan
-#       - name: Terraform Init
-#         working-directory: infra-deployment
-#         run: terraform init -var-file=env/prod/terraform.tfvars
+#   name: tf_shiftleft
 #
-#       - name: Terraform Plan
-#         id: plan
+#   on:
+#     pull_request:
+#       branches:
+#         - main
+#     push:
+#       branches:
+#         - main
+#
+#   jobs:
+#     tf_shiftleft:
+#       runs-on: ubuntu-latest
+#
+#       steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+#
+#       - name: Set up Terraform
+#         uses: hashicorp/setup-terraform@v2
+#         with:
+#           terraform_version: 1.10.1
+#
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ca-central-1
+#
+#       # Step 1: Lint with tflint
+#       - name: Install tflint
+#         run: |
+#           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+#
+#       - name: Run tflint
 #         working-directory: infra-deployment
-#         run: terraform plan -var-file=env/prod/terraform.tfvars
-
-       # Step 4: Terraform Testing with checkov
-       - name: Checkov GitHub Action
-         uses: bridgecrewio/checkov-action@v12
-         continue-on-error: true
-         with:
-          # This will add both a CLI output to the console and create a results.sarif file
-          output_format: cli,sarif
-          output_file_path: console,results.sarif
+#         run: tflint
+#         continue-on-error: true
+#
+#       # Step 2: Generate documentation with tfdocs
+#       - name: Generate terraform docs
+#         uses: actions/checkout@v3
+#         with:
+#          ref: ${{ github.event.pull_request.head.ref }}
+#
+#       - name: Render terraform docs and push changes back to PR
+#         uses: terraform-docs/gh-actions@main
+#         with:
+#          working-dir: .
+#          output-file: infra-deployment/tfdocs.md
+#          output-method: inject
+#          git-push: "true"
+#
+##         # Step 3: Terraform Plan
+##       - name: Terraform Init
+##         working-directory: infra-deployment
+##         run: terraform init -var-file=env/prod/terraform.tfvars
+##
+##       - name: Terraform Plan
+##         id: plan
+##         working-directory: infra-deployment
+##         run: terraform plan -var-file=env/prod/terraform.tfvars
+#
+#       # Step 4: Terraform Testing with checkov
+#       - name: Checkov GitHub Action
+#         uses: bridgecrewio/checkov-action@v12
+#         continue-on-error: true
+#         with:
+#          # This will add both a CLI output to the console and create a results.sarif file
+#          output_format: cli,sarif
+#          output_file_path: console,results.sarif

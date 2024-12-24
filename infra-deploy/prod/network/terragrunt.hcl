@@ -15,7 +15,7 @@ include "env" {
 inputs = {
   # Environment
   region                   = include.root.locals.region
-  availability_zones       = ["ca-central-1a", "ca-central-1b", "ca-central-1c"]
+  availability_zones       = ["ca-central-1a", "ca-central-1b", "ca-central-1d"]
 
   # VPC Configuration
   vpc_cidr_block           = "10.0.0.0/16"
@@ -116,7 +116,7 @@ remote_state {
 
   config = {
     bucket  = "prod-rails-bank-trx-reporting-deploy"
-    key     = "ecr.terraform.tfstate"
+    key     = "ecs.prod.terraform.tfstate"
     region  = "ca-central-1"
     encrypt = true
   }

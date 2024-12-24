@@ -1,45 +1,45 @@
-   # .github/workflows/deploy.yml
-
-   name: tf_deploy
-
-   on:
-    workflow_run:
-      workflows: [ "tf_sec" ]
-      types:
-        - completed
-
-   jobs:
-
-     terraform:
-       runs-on: ubuntu-latest
-
-       steps:
-
-       - name: Checkout repository
-         uses: actions/checkout@v3
-
-       - name: Configure AWS credentials
-         uses: aws-actions/configure-aws-credentials@v1
-         with:
-           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           aws-region: ca-central-1
-
-       - name: Set up Terraform
-         uses: hashicorp/setup-terraform@v2
-         with:
-           terraform_version: 1.10.1  # Specify the Terraform version you want to use
-
-       - name: Terraform Init
-         working-directory: infra-deployment
-         run: terraform init
-
-       - name: Terraform Plan
-         id: plan
-         working-directory: infra-deployment
-         run: terraform plan -var-file=env/prod/terraform.tfvars
-
-       - name: Terraform Apply
-         if: github.ref == 'refs/heads/main'  # Ensure this only runs on main branch
-         working-directory: infra-deployment
-         run: terraform apply -var-file=env/prod/terraform.tfvars -auto-approve
+#   # .github/workflows/deploy.yml
+#
+#   name: tf_deploy
+#
+#   on:
+#    workflow_run:
+#      workflows: [ "tf_sec" ]
+#      types:
+#        - completed
+#
+#   jobs:
+#
+#     terraform:
+#       runs-on: ubuntu-latest
+#
+#       steps:
+#
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+#
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ca-central-1
+#
+#       - name: Set up Terraform
+#         uses: hashicorp/setup-terraform@v2
+#         with:
+#           terraform_version: 1.10.1  # Specify the Terraform version you want to use
+#
+#       - name: Terraform Init
+#         working-directory: infra-deployment
+#         run: terraform init
+#
+#       - name: Terraform Plan
+#         id: plan
+#         working-directory: infra-deployment
+#         run: terraform plan -var-file=env/prod/terraform.tfvars
+#
+#       - name: Terraform Apply
+#         if: github.ref == 'refs/heads/main'  # Ensure this only runs on main branch
+#         working-directory: infra-deployment
+#         run: terraform apply -var-file=env/prod/terraform.tfvars -auto-approve
