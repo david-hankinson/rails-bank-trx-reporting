@@ -45,21 +45,22 @@ jobs:
       # Step 4: Tag and Push Images to ECR
       - name: Tag and Push Images
         run: |
-          # Get a list of Docker images matching a specific repository or filter
-          images=$(docker images --format "{{.Repository}}:{{.Tag}}")
-
+          # Get a list of Docker images (repository:tag format)
+          images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>")
+          
           # Loop through the images, tag them, and push to ECR
           for image in $images; do
-            # Extract the image name and tag
+            # Extract the repository name and tag
             image_name=$(echo $image | cut -d':' -f1)  # Extracts the image's repository name
             image_tag=$(echo $image | cut -d':' -f2)  # Extracts the image's tag
-
+          
             # Derive the ECR image URL
-            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/$image_name:$image_tag"
-
+            # Only use $AWS_ACCOUNT_ID, $AWS_REGION, and $ECR_REPO — exclude local image name from $image_name
+            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$image_tag"
+          
             # Tag the image for ECR
             docker tag $image $ecr_image
-
+          
             # Push the tagged image to ECR
             docker push $ecr_image
           done
@@ -67,9 +68,14 @@ jobs:
        # Step 5: Create a Docker Manifest
       - name: Create Docker Manifest
         run: |
-          manifest_images=$(docker images --format "{{.Repository}}:{{.Tag}}"| awk '{print $1}'")
+        # Get a list of tagged ECR images created in Step 4
+          manifest_images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>" | while read image; do
+            image_tag=$(echo $image | cut -d':' -f2)  # Extract the tag
+            echo "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$image_tag"
+          done)
 
+        # Create Docker manifest from the collected ECR images
           docker manifest create "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest" $manifest_images
 
-          # Push the Docker manifest to ECR
+        # Push the Docker manifest to ECR
           docker manifest push "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest"
