@@ -1,0 +1,64 @@
+name: Build and Push Docker Images to ECR
+
+on:
+  push:
+    branches:
+      - main # Run pipeline on pushes to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: "ca-central-1"
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      ECR_REPO_PREFIX: "${{ secrets.ECR_REPO }}" #
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Authenticate Docker with ECR
+      - name: Authenticate Docker to Amazon ECR
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+      # Step 3: Build Images Using Docker Compose
+      - name: Build Docker Images with Compose
+        run: docker compose build
+
+      # Step 4: Tag and Push Images to ECR
+      - name: Tag and Push Images
+        run: |
+          # Use docker compose to identify images
+          images=$(docker compose config | grep 'image:' | awk '{print $2}')
+
+          # Loop through the identified images, tag, and push
+          for image in $images; do
+            # Derive the ECR image URL
+            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/${image##*/}:latest"
+
+            # Tag the local image for ECR
+            docker tag $image $ecr_image
+
+            # Push the tagged image to ECR
+            docker push $ecr_image
+          done
+
+      # Step 5: Create a Docker Manifest
+      - name: Create Docker Manifest
+        run: |
+          # Collect ECR image references
+          manifest_images=""
+
+          for image in $(docker compose config | grep 'image:' | awk '{print $2}'); do
+            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/${image##*/}:latest"
+            manifest_images="$manifest_images $ecr_image"
+          done
+
+          # Create Docker manifest
+          docker manifest create $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest $manifest_images
+
+          # Push the manifest to ECR
+          docker manifest push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest
