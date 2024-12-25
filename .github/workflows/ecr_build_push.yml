@@ -68,14 +68,14 @@ jobs:
       # Step 5: Create a Docker Manifest
       - name: Create Docker Manifest
         run: |
-        # Get a list of tagged ECR images created in Step 4
+          # Get a list of tagged ECR images created in Step 4
           manifest_images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>" | while read image; do
             image_tag=$(echo $image | cut -d':' -f2)  # Extract the tag
             echo "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$image_tag"
           done)
 
-        # Create Docker manifest from the collected ECR images
+          # Create Docker manifest from the collected ECR images
           docker manifest create "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest" $manifest_images
 
-        # Push the Docker manifest to ECR
+          # Push the Docker manifest to ECR
           docker manifest push "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest"
