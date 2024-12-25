@@ -46,7 +46,7 @@ jobs:
       - name: Tag and Push Images
         run: |
           # Generate a unique tag using the current timestamp or Git commit hash
-          unique_tag=$(date +%Y%m%d%H%M%S)  # Use timestamp
+          unique_tag=$(git rev-parse --short HEAD)  # Use timestamp
           
           # Get a list of Docker images (repository:tag format)
           images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>")
@@ -70,7 +70,7 @@ jobs:
       - name: Create Docker Manifest
         run: |
               # Generate the unique tag used in Step 4
-              unique_tag=$(date +%Y%m%d%H%M%S)
+              unique_tag=$(git rev-parse --short HEAD)
           
               # Get a list of tagged ECR images created in Step 4
               manifest_images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>" | while read image; do
