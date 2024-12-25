@@ -65,7 +65,7 @@ jobs:
             docker push $ecr_image
           done
 
-       # Step 5: Create a Docker Manifest
+      # Step 5: Create a Docker Manifest
       - name: Create Docker Manifest
         run: |
         # Get a list of tagged ECR images created in Step 4
