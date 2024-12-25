@@ -1,5 +1,5 @@
-resource "aws_launch_template" "ecs_lt" {
-  name_prefix   = "ecs-template"
+resource "aws_launch_template" "this" {
+  name_prefix   = "${var.launch_template_name_prefix}-lt"
   image_id      = "ami-062c116e449466e7f"
   instance_type = "t3.micro"
 
