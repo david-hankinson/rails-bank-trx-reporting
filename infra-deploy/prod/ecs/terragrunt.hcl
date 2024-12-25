@@ -23,11 +23,17 @@ dependency "network" {
 }
 
 inputs = {
+  ## ec2 inputs
   launch_template_name_prefix = "rails-bank-trx-reporting-prod-asg"
   ec2_image_id = "ami-002e59623e3f8d3f6" # bottlerocket image
   ec2_instance_type = "t2.small"
-  vpc_zone_identifier = [dependency.network.outputs.public_subnets_ids[*], dependency.network.outputs.public_subnets_ids[*]]
-  security_group_ids = [dependency.network.outputs.security_group_ids[*]]
+  vpc_zone_identifier = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
+  security_group_ids = dependency.network.outputs.security_group_ids
+
+  ## ecs inputs
+  aws_ecs_cluster_name = rails-bank-trx-reporting
+  aws_ecs_capacity_provider_name = rails-bank-trx-reporting-capacity-provider
+
 }
 
 remote_state {

@@ -22,3 +22,19 @@ variable "security_group_ids" {
   type = list(string)
   description = "security_group_ids"
 }
+
+variable "aws_ecs_cluster_name" {
+  type = string
+  description = "aws ecs cluster name"
+}
+
+variable "aws_ecs_capacity_provider_name" {
+  type = string
+  description = "aws ecs capacity provider name"
+}
+
+variable "aws_ecs_task_definition_family" {
+  type = string
+  description = "aws ecs task definition"
+}
+
