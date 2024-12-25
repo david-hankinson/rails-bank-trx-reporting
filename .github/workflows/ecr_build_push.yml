@@ -46,7 +46,7 @@ jobs:
       - name: Tag and Push Images
         run: |
           # Get a list of Docker images matching a specific repository or filter
-          images=$(docker images)
+          images=$(docker images --format "{{.Repository}}:{{.Tag}}")
 
           # Loop through the images, tag them, and push to ECR
           for image in $images; do
@@ -67,7 +67,7 @@ jobs:
        # Step 5: Create a Docker Manifest
       - name: Create Docker Manifest
         run: |
-          manifest_images=$(docker images | awk '{print $1}'")
+          manifest_images=$(docker images --format "{{.Repository}}:{{.Tag}}"| awk '{print $1}'")
 
           docker manifest create "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest" $manifest_images
 
