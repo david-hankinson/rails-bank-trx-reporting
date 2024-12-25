@@ -49,12 +49,12 @@ jobs:
           commit_hash=$(git rev-parse --short HEAD)
           
           # Get a list of unique repositories (REPOSITORY values) from docker images
-          repositories=$(docker images --format "{{.Repository}}" | sort | uniq)
+          repositories=$(docker images --format "{{.REPOSITORY}}" | sort | uniq)
           
           # Loop through each repository and push its images
           for repo in $repositories; do
             # Get the list of tags for the current repository
-            tags=$(docker images --format "{{.Tag}}" --filter "reference=$repo")
+            tags=$(docker images --format "{{.TAG}}" --filter "reference=$repo")
             
             for tag in $tags; do
               # Derive the ECR image URL with commit-based tag
