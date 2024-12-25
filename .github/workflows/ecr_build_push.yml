@@ -43,24 +43,6 @@ jobs:
         run: |
           # Use docker compose to identify images
           images=$(docker compose config | grep 'image:' | awk '{print $2}')
-
-          # Loop through the identified images, tag, and push
-          for image in $images; do
-            # Derive the ECR image URL
-            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/${image##*/}:latest"
-
-            # Tag the local image for ECR
-            docker tag $image $ecr_image
-
-            # Push the tagged image to ECR
-            docker push $ecr_image
-          done
-
-      # Step 5: Create a Docker Manifest
-      - name: Create Docker Manifest
-        run: |
-          # Use docker compose to identify images
-          images=$(docker compose config | grep 'image:' | awk '{print $2}')
           
           # Loop through the identified images, tag, and push
           for image in $images; do
@@ -77,3 +59,20 @@ jobs:
             # Push the tagged image to ECR
             docker push $ecr_image
           done
+
+      # Step 5: Create a Docker Manifest
+      - name: Create Docker Manifest
+        run: |
+          # Collect ECR image references
+          manifest_images=""
+
+          for image in $(docker compose config | grep 'image:' | awk '{print $2}'); do
+            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/${image##*/}"
+            manifest_images="$manifest_images $ecr_image"
+          done
+
+          # Create Docker manifest
+          docker manifest create $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO $manifest_images
+
+          # Push the manifest to ECR
+          docker manifest push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO
