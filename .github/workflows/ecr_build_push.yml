@@ -31,7 +31,7 @@ jobs:
       # Step 2: Authenticate Docker with ECR
       - name: Authenticate Docker to Amazon ECR
         run: |
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/
           
 
       # Step 3: Build Images Using Docker Compose
