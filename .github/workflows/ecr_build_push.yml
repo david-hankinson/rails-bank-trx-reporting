@@ -42,27 +42,27 @@ jobs:
       - name: Docker images list
         run: docker images
 
-#      # Step 4: Tag and Push Images to ECR
-#      - name: Tag and Push Images
-#        run: |
-#          # Use docker compose to identify images
-#          images=$(docker compose config | grep 'image:' | awk '{print $2}')
-#
-#          # Loop through the identified images, tag, and push
-#          for image in $images; do
-#            # Extract the image name and tag
-#            image_name=$(echo $image | cut -d':' -f1) # Extracts the image name (before the colon)
-#            image_tag=$(echo $image | cut -d':' -f2-) # Extracts the image tag (after the colon)
-#
-#            # Derive the ECR image URL
-#            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/$image_name:$image_tag"
-#
-#            # Tag the local image for ECR
-#            docker tag $image $ecr_image
-#
-#            # Push the tagged image to ECR
-#            docker push $ecr_image
-#          done
+      # Step 4: Tag and Push Images to ECR
+      - name: Tag and Push Images
+        run: |
+          # Use docker compose to identify images
+          images=$(docker compose config | grep 'image:' | awk '{print $2}')
+
+          # Loop through the identified images, tag, and push
+          for image in $images; do
+            # Extract the image name and tag
+            image_name=$(echo $image | cut -d':' -f1) # Extracts the image name (before the colon)
+            image_tag=$(echo $image | cut -d':' -f2-) # Extracts the image tag (after the colon)
+
+            # Derive the ECR image URL
+            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/$image_name:$image_tag"
+
+            # Tag the local image for ECR
+            docker tag $image $ecr_image
+
+            # Push the tagged image to ECR
+            docker push $ecr_image
+          done
 #
 #      # Step 5: Create a Docker Manifest
 #      - name: Create Docker Manifest
