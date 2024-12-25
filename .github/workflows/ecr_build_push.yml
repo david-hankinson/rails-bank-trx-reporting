@@ -63,12 +63,12 @@ jobs:
           manifest_images=""
 
           for image in $(docker compose config | grep 'image:' | awk '{print $2}'); do
-            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/${image##*/}:latest"
+            ecr_image="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/${image##*/}"
             manifest_images="$manifest_images $ecr_image"
           done
 
           # Create Docker manifest
-          docker manifest create $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest $manifest_images
+          docker manifest create $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO $manifest_images
 
           # Push the manifest to ECR
-          docker manifest push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest
+          docker manifest push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO
