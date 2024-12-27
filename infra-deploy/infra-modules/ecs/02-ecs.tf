@@ -1,6 +1,8 @@
 # Create an ECS cluster
 resource "aws_ecs_cluster" "this" {
   name = var.aws_ecs_cluster_name
+
+  depends_on = [aws_autoscaling_group.this]
 }
 
 resource "aws_ecs_capacity_provider" "this" {
@@ -10,10 +12,10 @@ resource "aws_ecs_capacity_provider" "this" {
     auto_scaling_group_arn = aws_autoscaling_group.this.arn
 
     managed_scaling {
-      maximum_scaling_step_size = 1000
-      minimum_scaling_step_size = 1
-      status                    = "ENABLED"
-      target_capacity           = 2
+      maximum_scaling_step_size = var.ecs_maximum_capacity_provider_maximum_scaling_step_size
+      minimum_scaling_step_size = var.ecs_minimum_capacity_provider_maximum_scaling_step_size
+      status                    = "ENABLED" # Hardcoded as an opinionated standard
+      target_capacity           = var.ecs_target_capacity_percentage
     }
   }
 }
@@ -24,8 +26,8 @@ resource "aws_ecs_cluster_capacity_providers" "this" {
   capacity_providers = [aws_ecs_capacity_provider.this.name]
 
   default_capacity_provider_strategy {
-    base              = 1
-    weight            = 100
+    base              = 1 # Minimum number of tasks to run on this capacity provider
+    weight            = 100 # Makes this provider the default, 100% of tasks will be hosted here
     capacity_provider = aws_ecs_capacity_provider.this.name
   }
 }
