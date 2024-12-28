@@ -38,3 +38,34 @@ variable "aws_ecs_task_definition_family" {
   description = "aws ecs task definition"
 }
 
+variable "ecs_maximum_capacity_provider_maximum_scaling_step_size" {
+  type = number
+  description = "ecs maximum capacity provider maximum scaling step size"
+}
+
+variable "ecs_minimum_capacity_provider_maximum_scaling_step_size" {
+  type = number
+  description = "ecs minimum capacity provider minimum scaling step size"
+}
+
+variable "ecs_target_capacity_percentage" {
+  type = number
+  description = "ecs target capacity percentage"
+}
+
+variable "aws_ecs_service_subnets" {
+  type = list(string)
+  description = "aws ecs service subnets"
+}
+
+variable "aws_ecs_service_security_groups" {
+  type = list(string)
+  description = "aws ecs service security groups"
+}
+
+variable "aws_ecs_service_load_balancer" {
+  type = string
+  description = "aws ecs service load balancer"
+}
+
+

@@ -61,15 +61,15 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 # Define the ECS service that will run the task
-resource "aws_ecs_service" "ecs_service" {
+resource "aws_ecs_service" "this" {
   name            = "my-ecs-service"
-  cluster         = aws_ecs_cluster.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.ecs_task_definition.arn
+  cluster         = aws_ecs_cluster.this.id
+  task_definition = aws_ecs_task_definition.this.arn
   desired_count   = 2
 
   network_configuration {
-    subnets         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
-    security_groups = [aws_security_group.security_group.id]
+    subnets         = var.aws_ecs_service_subnets
+    security_groups = var.aws_ecs_service_security_groups
   }
 
   force_new_deployment = true
@@ -82,15 +82,15 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   capacity_provider_strategy {
-    capacity_provider = aws_ecs_capacity_provider.ecs_capacity_provider.name
+    capacity_provider = aws_ecs_capacity_provider.this.name
     weight            = 100
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.ecs_tg.arn
+    target_group_arn = var.aws_ecs_service_load_balancer
     container_name   = "dockergs"
     container_port   = 80
   }
 
-  depends_on = [aws_autoscaling_group.ecs_asg]
+  depends_on = [aws_autoscaling_group.this]
 }
