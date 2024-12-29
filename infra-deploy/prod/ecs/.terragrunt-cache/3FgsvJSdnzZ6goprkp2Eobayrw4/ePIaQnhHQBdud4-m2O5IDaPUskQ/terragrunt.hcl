@@ -27,7 +27,7 @@ dependency "network" {
 inputs = {
   ## ec2 inputs
   launch_template_name_prefix = "rails-bank-trx-reporting-prod-asg"
-  ec2_image_id = "ami-000aeef26718f62f2" # bottlerocket image
+  ec2_image_id = "ami-0a590ca28046d073e" # bottlerocket image
   ec2_instance_type = "t2.medium"
   vpc_zone_identifier = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
   security_group_ids = dependency.network.outputs.security_group_ids

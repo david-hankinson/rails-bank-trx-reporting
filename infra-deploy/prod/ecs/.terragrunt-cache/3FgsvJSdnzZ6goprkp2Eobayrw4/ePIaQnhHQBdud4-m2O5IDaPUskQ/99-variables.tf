@@ -1,18 +1,3 @@
-variable "env" {
-  description = "Which environment the infrastructure will be deployed in"
-  type = string
-}
-
-variable "vpc_id" {
-  type = string
-  description = "vpc id"
-}
-
-variable "public_subnet_ids" {
-  type = list(string)
-  description = "public subnet ids"
-}
-
 variable "launch_template_name_prefix" {
   type = string
   description = "launch template name prefix"

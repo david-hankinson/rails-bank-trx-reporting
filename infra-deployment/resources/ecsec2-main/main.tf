@@ -63,7 +63,7 @@ resource "aws_ecs_service" "ecs_service" {
   name            = "my-ecs-service"
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.ecs_task_definition.arn
-  desired_count   = 2
+  desired_count   = 3
 
   network_configuration {
     subnets         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]

@@ -21,11 +21,3 @@ output "load_balancer_id" {
 output "lb_target_group_id" {
   value = aws_lb_target_group.this.id
 }
-
-output "alb_url" {
-  value = aws_lb.this.dns_name
-}
-
-output "vpc_cidr_block" {
-  value = aws_vpc.this.cidr_block
-}

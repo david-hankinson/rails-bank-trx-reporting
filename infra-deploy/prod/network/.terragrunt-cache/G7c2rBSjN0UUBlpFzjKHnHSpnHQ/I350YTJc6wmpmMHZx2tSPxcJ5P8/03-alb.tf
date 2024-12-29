@@ -1,5 +1,6 @@
 resource "aws_lb" "this" {
   name               = "${var.env}-alb"
+  internal           = false                         # Public-facing ALB
   load_balancer_type = "application"
   security_groups    = [for sg in aws_security_group.this : sg.id] #  # ALB security groups
   subnets            = aws_subnet.public[*].id       # Use public subnets
@@ -18,14 +19,11 @@ resource "aws_lb_target_group" "this" {
   vpc_id   = aws_vpc.this.id
 
   health_check {
-  enabled             = true
     path                = "/"
-    port                = 80
-    matcher             = 200
-    interval            = 10
+    interval            = 30
     timeout             = 5
     healthy_threshold   = 2
-    unhealthy_threshold = 3
+    unhealthy_threshold = 2
   }
 
   tags = {
@@ -49,12 +47,6 @@ resource "aws_internet_gateway" "this" {
   tags = {
     Name = "internet_gateway"
   }
-}
-
-resource "aws_eip" "this" {
-  for_each = { for idx, subnet_id in aws_subnet.public[*].id : idx => subnet_id }
-  depends_on = [aws_internet_gateway.this]
-  tags       = { Name = "${var.env}-eip" }
 }
 
 resource "aws_route_table" "this" {

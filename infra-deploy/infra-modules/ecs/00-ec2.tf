@@ -1,38 +1,31 @@
+data "aws_ssm_parameter" "this" {
+  name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
+}
+
 resource "aws_launch_template" "this" {
-  name_prefix   = "${var.launch_template_name_prefix}-ec2-lt"
-  image_id      = var.ec2_image_id
-  instance_type = var.ec2_instance_type
+  name_prefix            = "demo-ecs-ec2-"
+  image_id               = data.aws_ssm_parameter.this.value
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.this.id]
 
-  # key_name               = "ec2ecsglog"
-  vpc_security_group_ids = var.security_group_ids
-  # iam_instance_profile {
-  #   name = #TODO
-  # }
+  iam_instance_profile { arn = aws_iam_instance_profile.this.arn }
+  monitoring { enabled = true }
 
-  block_device_mappings {
-    device_name = "/dev/xvda"
-    ebs {
-      volume_size = 30
-      volume_type = "gp2"
-    }
-  }
-
-  tag_specifications {
-    resource_type = "instance"
-    tags = {
-      Name = "ecs-instance"
-    }
-  }
-
-  # user_data = filebase64("./ecs.sh")
-
+  user_data = base64encode(<<-EOF
+      #!/bin/bash
+      echo ECS_CLUSTER=${aws_ecs_cluster.this.name} >> /etc/ecs/ecs.config;
+    EOF
+  )
 }
 
 resource "aws_autoscaling_group" "this" {
-  vpc_zone_identifier = var.vpc_zone_identifier
-  desired_capacity    = 2
-  max_size            = 3
-  min_size            = 1
+  name_prefix               = "${var.env}-ecs-asg"
+  vpc_zone_identifier       = var.public_subnet_ids
+  min_size                  = 2
+  max_size                  = 8
+  health_check_grace_period = 0
+  health_check_type         = "EC2"
+  protect_from_scale_in     = false
 
   launch_template {
     id      = aws_launch_template.this.id
@@ -40,12 +33,17 @@ resource "aws_autoscaling_group" "this" {
   }
 
   tag {
+    key                 = "Name"
+    value               = "${var.env}-ecs-cluster"
+    propagate_at_launch = true
+  }
+
+  tag {
     key                 = "AmazonECSManaged"
-    value               = true
+    value               = ""
     propagate_at_launch = true
   }
 }
-
 
 
 
