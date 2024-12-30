@@ -1,5 +1,6 @@
-# AWS Deployment of [a Ruby on Rails/React App](https://github.com/ttibensky/rails-bank-trx-reporting) that imports 100M bank transactions
+# Keep your terraform/opentofu project DRY and avoid monolithic backends with Terragrunt  
 
-This repo is forked from the initial excellent work done by Tomas! This repo will act as an AWS deployment of his excellent application
+- This is a forked repo of @tomas project [a Ruby on Rails/React App](https://github.com/ttibensky/rails-bank-trx-reporting) that imports 100M bank transactions.. + the /infra-deploy directory, which contains terraform code for the AWS Deployment.
 
-The deployment to AWS is a work in progress during December, with the deployment expected to be finished by new years!
+
+
