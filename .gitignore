@@ -5,6 +5,9 @@
 .terraform
 */.terragrunt-cache/*
 
+venv
+.venv
+
 ### Standard Terraform Section ###
 
 # Local .terraform directories
