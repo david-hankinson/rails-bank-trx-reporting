@@ -21,7 +21,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_29_104445) do
     t.json "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["month"], name: "index_reports_on_month"
   end
 
   create_table "transactions", id: false, force: :cascade do |t|
@@ -31,8 +30,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_29_104445) do
     t.decimal "amount", precision: 10, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["branch"], name: "index_transactions_on_branch"
-    t.index ["timestamp"], name: "index_transactions_on_timestamp"
   end
 
 end

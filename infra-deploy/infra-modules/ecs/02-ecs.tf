@@ -35,32 +35,33 @@ resource "aws_ecs_cluster_capacity_providers" "this" {
 
 # Define the ECS task definition for the service
 resource "aws_ecs_task_definition" "this" {
-  family             = "${var.env}-rails-bank-trx-reporting"
-  task_role_arn      = aws_iam_role.ecs_task_role.arn
-  execution_role_arn = aws_iam_role.ecs_node_role.arn
-  network_mode       = "awsvpc"
-  cpu                = 256
-  memory             = 1024
+  family                   = "nginx"
+  requires_compatibilities = ["EC2"]
+  network_mode             = "awsvpc"
 
-  container_definitions = jsonencode([{
-    name         = "${var.env}-rails",
-    image        = "891377081827.dkr.ecr.ca-central-1.amazonaws.com/ecr-rails-bank-trx-reporting:build-71a27f0",
-    essential    = true,
-    portMappings = [{ containerPort = 80, hostPort = 80 }],
-
-    environment = [
-      { name = "${var.env}-rails", value = "${var.env}-rails" }
-    ]
-
-    logConfiguration = {
-      logDriver = "awslogs",
-      options = {
-        "awslogs-region"        = "ca-central-1",
-        "awslogs-group"         = aws_cloudwatch_log_group.this.name,
-        "awslogs-stream-prefix" = "rails-bank-trx-reporting-rails"
+  container_definitions = jsonencode([
+    {
+      name        = "nginx",
+      image       = "nginx:latest",
+      memory      = 256,
+      cpu         = 256,
+      essential   = true,
+      portMappings = [
+        {
+          containerPort = 80,
+          protocol      = "tcp"
+        }
+      ],
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.this.id
+          awslogs-region        = "ca-central-1",
+          awslogs-stream-prefix = "nginx"
+        }
       }
-    },
-  }])
+    }
+  ])
 }
 
 # Define the ECS service that will run the task
@@ -92,7 +93,7 @@ resource "aws_ecs_service" "this" {
 
   load_balancer {
     target_group_arn = var.aws_ecs_service_load_balancer_tg
-    container_name = "${var.env}-rails"
+    container_name = "nginx"
     container_port = 80
   }
 }
