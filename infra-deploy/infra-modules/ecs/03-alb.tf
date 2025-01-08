@@ -2,7 +2,7 @@ resource "aws_lb" "this" {
   name               = "${var.env}-alb"
   load_balancer_type = "application"
   security_groups    = [aws_security_group.this.id] #  # ALB security groups
-  subnets            = aws_subnet.public[*].id       # Use public subnets
+  subnets            = var.public_subnet_ids       # Use public subnets
 
   enable_deletion_protection = false
   tags = {
@@ -15,7 +15,7 @@ resource "aws_lb_target_group" "this" {
   target_type = "ip"
   port     = 8080
   protocol = "HTTP"
-  vpc_id   = aws_vpc.this.id
+  vpc_id   = var.vpc_id
 
   health_check {
   enabled             = true
@@ -33,9 +33,6 @@ resource "aws_lb_target_group" "this" {
   }
 }
 
-
-
-
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.this.arn
   port              = 8080
@@ -47,29 +44,22 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-resource "aws_internet_gateway" "this" {
-  vpc_id = aws_vpc.this.id
-  tags = {
-    Name = "internet_gateway"
-  }
-}
-
-resource "aws_eip" "this" {
-  for_each = { for idx, subnet_id in aws_subnet.public[*].id : idx => subnet_id }
-  depends_on = [aws_internet_gateway.this]
-  tags       = { Name = "${var.env}-eip" }
-}
+# resource "aws_eip" "this" {
+#   for_each = { for idx, subnet_id in aws_subnet.public[*].id : idx => subnet_id }
+#   depends_on = [aws_internet_gateway.this]
+#   tags       = { Name = "${var.env}-eip" }
+# }
 
 resource "aws_route_table" "this" {
-  vpc_id = aws_vpc.this.id
+  vpc_id = var.vpc_id
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.this.id
+    gateway_id = var.internet_gw_id
   }
 }
 
 resource "aws_route_table_association" "public_subnets" {
-  for_each = { for idx, subnet_id in aws_subnet.public[*].id : idx => subnet_id }
+  for_each = { for idx, subnet_id in var.public_subnet_ids : idx => subnet_id }
 
   subnet_id      = each.value
   route_table_id = aws_route_table.this.id

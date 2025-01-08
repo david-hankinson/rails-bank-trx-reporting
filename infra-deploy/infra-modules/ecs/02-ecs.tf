@@ -6,33 +6,40 @@ resource "aws_ecs_cluster" "this" {
 }
 
 
-# resource "aws_ecs_capacity_provider" "this" {
-#   name = "${var.env}-rails-bank-trx-fargate-cp" # Name for Fargate capacity provider
-#
-#   auto_scaling_group_provider {
-#
-#   }
-#   # Fargate Spot is optional, but can be included based on your requirements
-#   tags = {
-#     Name = "${var.env}-rails-bank-trx-fargate-cp"
-#   }
-# }
+resource "aws_ecs_capacity_provider" "this" {
+  name = "${var.env}-rails-bank-trx-fargate-cp" # Name for Fargate capacity provider
 
-# resource "aws_ecs_cluster_capacity_providers" "this" {
-#   cluster_name       = aws_ecs_cluster.this.name
-#   capacity_providers = [aws_ecs_capacity_provider.this.name]
-#
-#   default_capacity_provider_strategy {
-#     capacity_provider = aws_ecs_capacity_provider.this.name
-#     base              = 1
-#     weight            = 100
-#   }
-# }
+  auto_scaling_group_provider {
+    auto_scaling_group_arn         = aws_autoscaling_group.this.arn # Reference to the ASG you created
+    managed_scaling {
+      status                  = "ENABLED"
+      target_capacity         = 90     # Target utilization percentage for scaling
+      minimum_scaling_step_size = 1
+      maximum_scaling_step_size = 10
+    }
+    managed_termination_protection = "ENABLED" # Enable or disable instance termination protection
+  }
+  # Fargate Spot is optional, but can be included based on your requirements
+  tags = {
+    Name = "${var.env}-rails-bank-trx-fargate-cp"
+  }
+}
+
+resource "aws_ecs_cluster_capacity_providers" "this" {
+  cluster_name       = aws_ecs_cluster.this.name
+  capacity_providers = [aws_ecs_capacity_provider.this.name]
+
+  default_capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.this.name
+    base              = 1
+    weight            = 100
+  }
+}
 
 # Define the ECS task definition for the service
 resource "aws_ecs_task_definition" "this" {
   family                   = "nginx"
-  #requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = ["EC2"]
   network_mode             = "awsvpc"
 
   container_definitions = jsonencode([
@@ -53,7 +60,7 @@ resource "aws_ecs_task_definition" "this" {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.this.id
           awslogs-region        = "ca-central-1",
-          #awslogs-stream-prefix = "nginx-"
+          awslogs-stream-prefix = "nginx-"
         }
       }
     }
@@ -68,15 +75,15 @@ resource "aws_ecs_service" "this" {
   desired_count   = 2
 
   network_configuration {
-    subnets         = var.public_subnet_ids
+    subnets         = var.private_subnet_ids
     security_groups = [aws_security_group.this.id]
   }
 
-  # capacity_provider_strategy {
-  #   #capacity_provider = fa
-  #   base              = 1
-  #   weight            = 100
-  # }
+  capacity_provider_strategy {
+    capacity_provider = aws_autoscaling_group.this.id
+    base              = 1
+    weight            = 100
+  }
 
   ordered_placement_strategy {
     type  = "spread"
@@ -88,7 +95,7 @@ resource "aws_ecs_service" "this" {
   }
 
   load_balancer {
-    target_group_arn = var.aws_ecs_service_load_balancer_tg_arn
+    target_group_arn = aws_lb_target_group.this.arn
     container_name = "nginx"
     container_port = 8080
   }

@@ -1,10 +1,6 @@
-data "aws_ssm_parameter" "this" {
-  name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
-}
-
 resource "aws_launch_template" "this" {
-  name_prefix            = "demo-ecs-ec2-"
-  image_id               = data.aws_ssm_parameter.this.value
+  name_prefix            = "${var.env}-ecs-node-lt-"
+  image_id               = var.ec2_image_id
   instance_type          = var.ec2_instance_type
   vpc_security_group_ids = [aws_security_group.this.id]
 
@@ -14,14 +10,6 @@ resource "aws_launch_template" "this" {
   user_data = base64encode(<<-EOF
       #!/bin/bash
       echo ECS_CLUSTER=${aws_ecs_cluster.this.name} >> /etc/ecs/ecs.config;
-
-    # Get the instance's private IP address
-    PRIVATE_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
-
-    # Register the instance to the ALB Target Group
-    aws elbv2 register-targets \
-      --target-group-arn ${var.aws_ecs_service_load_balancer_tg} \
-      --targets Id=$PRIVATE_IP
     EOF
   )
 }
@@ -53,10 +41,10 @@ resource "aws_autoscaling_group" "this" {
   }
 }
 
-# resource "aws_alb_target_group_attachment" "this" {
-#   target_group_arn       = var.aws_ecs_service_load_balancer_tg
-#   target_id              = [aws_autoscaling_group.this.ip]
-# }
+resource "aws_alb_target_group_attachment" "this" {
+  target_group_arn       = aws_lb_target_group.this.arn
+  target_id              = [aws_autoscaling_group.this.ip]
+}
 
 
 

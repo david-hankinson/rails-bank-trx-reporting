@@ -26,6 +26,8 @@ dependency "network" {
     vpc_cidr_block = "10.0.0.0/16"
     load_balancer_id = "mock_lb"
     aws_ecs_service_load_balancer_tg_arn = "arn:aws:elasticloadbalancing:ca-central-1:000000000000:targetgroup/prod-tg/0000000000000000"
+    domain_name = "aaaaa"
+    internet_gw_id = "aaaa"
   }
 }
 
@@ -33,6 +35,9 @@ inputs = {
   ## env inputs
   env                      = include.env.locals.env
   region                   = include.env.locals.region
+
+  # Domain Configuration
+  domain_name              = "bankreporting-app-example.com"  # Default domain name for the app
 
   ## ec2 inputs
   launch_template_name_prefix = "rails-bank-trx-reporting-prod-asg"
@@ -50,12 +55,10 @@ inputs = {
   ecs_target_capacity_percentage = 80
   aws_ecs_service_subnets = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
   aws_ecs_service_security_groups = dependency.network.outputs.security_group_ids
-  aws_ecs_service_load_balancer = dependency.network.outputs.load_balancer_id
-  aws_ecs_service_load_balancer_tg = dependency.network.outputs.lb_target_group_id
   vpc_id = dependency.network.outputs.vpc_id
   public_subnet_ids = dependency.network.outputs.public_subnets_ids
   vpc_cidr_block = dependency.network.outputs.vpc_cidr_block
-  aws_ecs_service_load_balancer_tg_arn = dependency.network.outputs.aws_ecs_service_load_balancer_tg_arn
+  internet_gw_id = dependency.network.outputs.internet_gw_id
 }
 
 remote_state {

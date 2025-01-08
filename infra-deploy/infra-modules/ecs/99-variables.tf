@@ -13,20 +13,11 @@ variable "public_subnet_ids" {
   description = "public subnet ids"
 }
 
-variable "vpc_cidr_block" {
-  type = string
-  description = "vpc cidr block"
+variable "private_subnet_ids" {
+  type = list(string)
+  description = "private subnet ids"
 }
 
-variable "launch_template_name_prefix" {
-  type = string
-  description = "launch template name prefix"
-}
-
-variable "ec2_image_id" {
-  type        = string
-  description = "ec2 image id"
-}
 
 variable "ec2_instance_type" {
   type        = string
@@ -38,62 +29,22 @@ variable "vpc_zone_identifier" {
   description = "vpc zone identifiers"
 }
 
-variable "security_group_ids" {
-  type = list(string)
-  description = "security_group_ids"
-}
-
 variable "aws_ecs_cluster_name" {
   type = string
   description = "aws ecs cluster name"
 }
 
-variable "aws_ecs_capacity_provider_name" {
+variable "domain_name" {
   type = string
-  description = "aws ecs capacity provider name"
+  description = "domain name"
 }
 
-variable "aws_ecs_task_definition_family" {
+variable "internet_gw_id" {
   type = string
-  description = "aws ecs task definition"
+  description = "internet gw id"
 }
 
-variable "ecs_maximum_scaling_step_size" {
-  type = number
-  description = "ecs maximum capacity provider maximum scaling step size"
-}
-
-variable "ecs_minimum_scaling_step_size" {
-  type = number
-  description = "ecs minimum capacity provider minimum scaling step size"
-}
-
-variable "ecs_target_capacity_percentage" {
-  type = number
-  description = "ecs target capacity percentage"
-}
-
-variable "aws_ecs_service_subnets" {
-  type = list(string)
-  description = "aws ecs service subnets"
-}
-
-variable "aws_ecs_service_security_groups" {
-  type = list(string)
-  description = "aws ecs service security groups"
-}
-
-variable "aws_ecs_service_load_balancer" {
+variable "ec2_image_id" {
   type = string
-  description = "aws ecs service load balancer"
-}
-
-variable "aws_ecs_service_load_balancer_tg" {
-  type = string
-  description = "aws ecs service load balancer target group"
-}
-
-variable "aws_ecs_service_load_balancer_tg_arn" {
-  type = string
-  description = "aws ecs service load balancer target group arn"
+  description = "ec2 image id"
 }
