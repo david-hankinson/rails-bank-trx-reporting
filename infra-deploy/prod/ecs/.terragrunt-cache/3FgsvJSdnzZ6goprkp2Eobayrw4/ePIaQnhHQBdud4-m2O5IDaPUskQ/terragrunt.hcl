@@ -25,7 +25,6 @@ dependency "network" {
     vpc_id = "mock_vpc_id"
     vpc_cidr_block = "10.0.0.0/16"
     load_balancer_id = "mock_lb"
-    aws_ecs_service_load_balancer_tg_arn = "aaaaaaa"
   }
 }
 
@@ -55,7 +54,6 @@ inputs = {
   vpc_id = dependency.network.outputs.vpc_id
   public_subnet_ids = dependency.network.outputs.public_subnets_ids
   vpc_cidr_block = dependency.network.outputs.vpc_cidr_block
-  aws_ecs_service_load_balancer_tg_arn = dependency.network.outputs.aws_ecs_service_load_balancer_tg_arn
 }
 
 remote_state {

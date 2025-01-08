@@ -93,7 +93,3 @@ variable "aws_ecs_service_load_balancer_tg" {
   description = "aws ecs service load balancer target group"
 }
 
-variable "aws_ecs_service_load_balancer_tg_arn" {
-  type = string
-  description = "aws ecs service load balancer target group arn"
-}

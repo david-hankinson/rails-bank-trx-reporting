@@ -29,7 +29,3 @@ output "alb_url" {
 output "vpc_cidr_block" {
   value = aws_vpc.this.cidr_block
 }
-
-output "aws_ecs_service_load_balancer_tg_arn" {
-  value = aws_lb_target_group.this.arn
-}
