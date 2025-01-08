@@ -18,6 +18,7 @@ variable "private_subnet_ids" {
   description = "private subnet ids"
 }
 
+
 variable "ec2_instance_type" {
   type        = string
   description = "ec2 instance type"

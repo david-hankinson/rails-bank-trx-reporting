@@ -27,8 +27,7 @@ dependency "network" {
     load_balancer_id = "mock_lb"
     aws_ecs_service_load_balancer_tg_arn = "arn:aws:elasticloadbalancing:ca-central-1:000000000000:targetgroup/prod-tg/0000000000000000"
     domain_name = "aaaaa"
-    internet_gw_id = "aaaaa"
-    private_subnet_ids = "aaaaa"
+    internet_gw_id = "aaaa"
   }
 }
 
@@ -58,7 +57,6 @@ inputs = {
   aws_ecs_service_security_groups = dependency.network.outputs.security_group_ids
   vpc_id = dependency.network.outputs.vpc_id
   public_subnet_ids = dependency.network.outputs.public_subnets_ids
-  private_subnet_ids = dependency.network.outputs.private_subnets_ids
   vpc_cidr_block = dependency.network.outputs.vpc_cidr_block
   internet_gw_id = dependency.network.outputs.internet_gw_id
 }
