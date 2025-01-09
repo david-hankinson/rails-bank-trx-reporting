@@ -27,6 +27,7 @@ variable "enable_dns_support" {
   type = bool
 }
 
+
 # variable "domain_name" {
 #   type = string
 #   default = "http://bankreporting-app-example.com/"

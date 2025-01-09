@@ -7,4 +7,5 @@ resource "aws_vpc" "this" {
   tags = {
     name = "${var.env}-main"
   }
+
 }

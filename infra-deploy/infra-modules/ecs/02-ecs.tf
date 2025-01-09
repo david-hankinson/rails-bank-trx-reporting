@@ -1,27 +1,23 @@
 # Create an ECS cluster
 resource "aws_ecs_cluster" "this" {
-  name = var.aws_ecs_cluster_name
+  name = "my-ecs-cluster"
 
   #depends_on = [aws_autoscaling_group.this]
 }
 
-
 resource "aws_ecs_capacity_provider" "this" {
-  name = "${var.env}-rails-bank-trx-fargate-cp" # Name for Fargate capacity provider
+  name = "${var.env}-rails-bank-trx-ecs-ec2"
 
   auto_scaling_group_provider {
-    auto_scaling_group_arn         = aws_autoscaling_group.this.arn # Reference to the ASG you created
+    auto_scaling_group_arn         = aws_autoscaling_group.this.arn
+    managed_termination_protection = "DISABLED"
+
     managed_scaling {
-      status                  = "ENABLED"
-      target_capacity         = 90     # Target utilization percentage for scaling
+      maximum_scaling_step_size = 2
       minimum_scaling_step_size = 1
-      maximum_scaling_step_size = 10
+      status                    = "ENABLED"
+      target_capacity           = 100
     }
-    managed_termination_protection = "ENABLED" # Enable or disable instance termination protection
-  }
-  # Fargate Spot is optional, but can be included based on your requirements
-  tags = {
-    Name = "${var.env}-rails-bank-trx-fargate-cp"
   }
 }
 
@@ -38,9 +34,12 @@ resource "aws_ecs_cluster_capacity_providers" "this" {
 
 # Define the ECS task definition for the service
 resource "aws_ecs_task_definition" "this" {
-  family                   = "nginx"
-  requires_compatibilities = ["EC2"]
-  network_mode             = "awsvpc"
+  family             = "${var.env}-rails-bank-trx-reporting"
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
+  execution_role_arn = aws_iam_role.ecs_node_role.arn
+  network_mode       = "awsvpc"
+  cpu                = 256
+  memory             = 256
 
   container_definitions = jsonencode([
     {
@@ -51,7 +50,7 @@ resource "aws_ecs_task_definition" "this" {
       essential   = true,
       portMappings = [
         {
-          containerPort = 8080,
+          containerPort = 80,
           protocol      = "tcp"
         }
       ],
@@ -69,18 +68,18 @@ resource "aws_ecs_task_definition" "this" {
 
 # Define the ECS service that will run the task
 resource "aws_ecs_service" "this" {
-  name            = "${var.env}rails-bank-trx-reporting-service"
+  name            = "${var.env}-rails-bank-trx-reporting-service"
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.this.arn
   desired_count   = 2
 
   network_configuration {
-    subnets         = var.private_subnet_ids
+    subnets         = var.public_subnet_ids
     security_groups = [aws_security_group.this.id]
   }
 
   capacity_provider_strategy {
-    capacity_provider = aws_autoscaling_group.this.id
+    capacity_provider = aws_ecs_capacity_provider.this.name
     base              = 1
     weight            = 100
   }
@@ -97,6 +96,12 @@ resource "aws_ecs_service" "this" {
   load_balancer {
     target_group_arn = aws_lb_target_group.this.arn
     container_name = "nginx"
-    container_port = 8080
+    container_port = 80
   }
 }
+
+# resource "aws_nat_gateway" "this" {
+#   count = length(var.public_subnet_ids)
+#   connectivity_type = "public"
+#   subnet_id = var.public_subnet_ids[count.index]
+# }

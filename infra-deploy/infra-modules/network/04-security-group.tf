@@ -1,6 +1,6 @@
 resource "aws_security_group" "this" {
-  name_prefix = "${var.env}-ecs-sg"
-  vpc_id      = var.vpc_id
+  name_prefix = "${var.env}-vpc-sg"
+  vpc_id = aws_vpc.this.id
 
   ingress {
     from_port   = 0
@@ -16,6 +16,3 @@ resource "aws_security_group" "this" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-
-
-

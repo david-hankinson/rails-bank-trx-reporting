@@ -29,6 +29,7 @@ dependency "network" {
     domain_name = "aaaaa"
     internet_gw_id = "aaaaa"
     private_subnet_ids = "aaaaa"
+    vpc_security_group_ids = "aaaaaaa"
   }
 }
 
@@ -42,10 +43,9 @@ inputs = {
 
   ## ec2 inputs
   launch_template_name_prefix = "rails-bank-trx-reporting-prod-asg"
-  ec2_image_id = "ami-000aeef26718f62f2" # bottlerocket image
-  ec2_instance_type = "t2.medium"
+  ec2_image_id = "ami-003c73db869b0c14b" # bottlerocket image
+  ec2_instance_type = "t3.medium"
   vpc_zone_identifier = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
-  security_group_ids = dependency.network.outputs.security_group_ids
 
   ## ecs inputs
   aws_ecs_cluster_name = "rails-bank-trx-reporting"
@@ -55,8 +55,8 @@ inputs = {
   ecs_maximum_scaling_step_size = 2
   ecs_target_capacity_percentage = 80
   aws_ecs_service_subnets = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
-  aws_ecs_service_security_groups = dependency.network.outputs.security_group_ids
   vpc_id = dependency.network.outputs.vpc_id
+  vpc_security_group_ids = dependency.network.outputs.vpc_sg
   public_subnet_ids = dependency.network.outputs.public_subnets_ids
   private_subnet_ids = dependency.network.outputs.private_subnets_ids
   vpc_cidr_block = dependency.network.outputs.vpc_cidr_block

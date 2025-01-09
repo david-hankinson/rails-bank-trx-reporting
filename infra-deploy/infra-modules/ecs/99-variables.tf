@@ -28,6 +28,11 @@ variable "vpc_zone_identifier" {
   description = "vpc zone identifiers"
 }
 
+variable "vpc_security_group_ids" {
+  type = string
+  description = "vpc security group ids"
+}
+
 variable "aws_ecs_cluster_name" {
   type = string
   description = "aws ecs cluster name"
